@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='2ec7c2b3-5181-3eb2-baf8-f41ba9fb8f9c'&dunesName='Action'&name='URL'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='3814e82b-d455-3f49-951a-836e6d9ed7d1'&dunesName='Action'&name='DateUtil'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='00c81a6c-93b4-36d7-9744-3351d06f0b46'&dunesName='Action'&name='Session'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='04026de8-ef2a-361a-bc5b-f7220710dcb3'&dunesName='Action'&name='StringBuilder'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='fda59af1-7ae9-3f4d-a9b1-2233416d7907'&dunesName='Action'&name='JsonUtil'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='3693afe8-bc48-3434-98ce-d3705b6ff21c'&dunesName='Action'&name='Locking'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='34d456cf-c01f-3d78-8b10-b3e556be7174'&dunesName='Action'&name='OnErrorResumeNext'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='42c22df6-5373-31b3-b98e-4c563d84c2b4'&dunesName='Action'&name='Base64'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='d746abf6-d750-3e57-bdf6-94dc742a8075'&dunesName='Action'&name='TriggerFuture'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='56a49359-5b60-3274-830a-b4717ea78f05'&dunesName='Action'&name='AsyncWorkflowExecutor'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='9d352a97-cb26-3f21-a334-00e14d0775e0'&dunesName='Action'&name='Ip4'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='74d3609f-0168-38af-a412-ea30b30826a5'&dunesName='Action'&name='WorkflowUtil'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='bee89aac-d822-34d1-84b3-cbde83c12073'&dunesName='Action'&name='AsyncActionExecutor'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='ce2e455f-c7b3-313e-a79d-d76e9cd4feb7'&dunesName='Action'&name='XmlUtil'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='7767259f-bde2-3bce-8e86-13d1256107be'&dunesName='Action'&name='ConfigElementAccessor'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='db306807-cdab-36e4-abda-17bd6b35b09f'&dunesName='Action'&name='Future'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='a6a8c304-b6a8-3aca-9f14-662b9747251c'&dunesName='Action'&name='ResourceElementAccessor'&category='com.vmware.pscoe.library.ts.util']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='5b26476a-4f47-3317-8f2b-158003dce1d5'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='e0820157-f2ae-3039-86fc-445ccfacd896'&dunesName='Workflow']]></elm>
+</package>

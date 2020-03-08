@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Future" result-type="Any" api-version="6.0.0" id="db306807-cdab-36e4-abda-17bd6b35b09f" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Future = /** @class */ (function () {
+    function Future(value) {
+        this.value = value;
+    }
+    Future.prototype.isDone = function () {
+        return this.isCompleted || (this.isCompleted = this.checkCompleted());
+    };
+    Future.prototype.wait = function (timeoutInSeconds, sleepTimeInSeconds) {
+        timeoutInSeconds = timeoutInSeconds != null ? timeoutInSeconds : 300;
+        sleepTimeInSeconds = sleepTimeInSeconds || 1;
+        var endDate = new Date();
+        if (timeoutInSeconds) {
+            endDate.setSeconds(endDate.getSeconds() + timeoutInSeconds);
+        }
+        while (!this.isDone()) {
+            System.sleep(sleepTimeInSeconds * 1000);
+            if (timeoutInSeconds && endDate.getTime() < (new Date()).getTime()) {
+                throw new Error("Timeout waiting '" + this.toString() + "'");
+            }
+        }
+        if (this.error) {
+            throw this.error;
+        }
+    };
+    Future.prototype.get = function (timeoutInSeconds, sleepTimeInSeconds) {
+        this.wait(timeoutInSeconds, sleepTimeInSeconds);
+        return this.value;
+    };
+    Future.prototype.toString = function () {
+        return "Future";
+    };
+    Future.join = function (futures) {
+        return new AggregatedFuture(futures);
+    };
+    Future.waitAll = function (futures, timeoutInSeconds, sleepTimeInSeconds) {
+        this.join(futures).wait(timeoutInSeconds, sleepTimeInSeconds);
+    };
+    Future.getAll = function (futures, timeoutInSeconds, sleepTimeInSeconds) {
+        return this.join(futures).get(timeoutInSeconds, sleepTimeInSeconds);
+    };
+    Future.prototype.checkCompleted = function () {
+        return true;
+    };
+    return Future;
+}());
+var AggregatedFuture = /** @class */ (function (_super) {
+    __extends(AggregatedFuture, _super);
+    function AggregatedFuture(futures) {
+        var _this = _super.call(this) || this;
+        _this.futures = futures;
+        return _this;
+    }
+    AggregatedFuture.prototype.wait = function (timeoutInSeconds, sleepTimeInSeconds) {
+        if (!this.value) {
+            var values_1 = [];
+            this.futures.forEach(function (f) {
+                values_1.push(f.get(timeoutInSeconds, sleepTimeInSeconds));
+            });
+            this.value = values_1;
+        }
+    };
+    AggregatedFuture.prototype.checkCompleted = function () {
+        return this.futures.every(function (f) { return f.isDone(); });
+    };
+    return AggregatedFuture;
+}(Future));
+return VROES.export().named("Future", Future).build();
+]]></script>
+</dunes-script-module>

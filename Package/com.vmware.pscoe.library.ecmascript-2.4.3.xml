@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='ed49e4bb-6b26-34c6-afe4-cb84d401a506'&dunesName='Action'&name='VROES'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='2a1ec9fd-4e55-3e64-9c54-17773e5640ec'&dunesName='Action'&name='Shims'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='df278d20-f4f5-32c6-a2bf-9e6661f57d09'&dunesName='Action'&name='Class'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='6b6867b5-0f07-36b0-afa5-1d78650d922c'&dunesName='Action'&name='Promise'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='fa903e22-4334-3c26-a777-cf96133f3a14'&dunesName='Action'&name='Map'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='babc3b33-a588-3ce2-acb3-0f970d51edff'&dunesName='Action'&name='Module'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='75dea874-2d74-3a25-a1a1-1081c2cd2cde'&dunesName='Action'&name='Set'&category='com.vmware.pscoe.library.ecmascript']]></elm>
+</package>

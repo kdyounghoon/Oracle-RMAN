@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="27aa09dd-5233-4f3f-9d05-10494d967f7b" version="0.0.0">
+  <display-name><![CDATA[GPDB Clusters]]></display-name>
+  <atts>
+    <att name="cluster1" type="string" read-only="false">
+      <value encoded="n"><![CDATA[{"clusterId":"5ec29ee2-bd56-47ad-966d-7731af17b001","mdwId":"5ec29ee2-bd56-47ad-966d-7731af17b001","smdwId":"5ec29ee2-bd56-47ad-966d-7731af17b002","sdwIds":"test","members":[{"fqdn":"vtatesthost1","ipAddress":"1.1.1.1","id":"5ec29ee2-bd56-47ad-966d-7731af17b001","role":"mdw"},{"fqdn":"vtatesthost2","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b002","role":"smdw"},{"fqdn":"vtatesthost3","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b003","role":"sdw"},{"fqdn":"vtatesthost4","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b004","role":"sdw"},{"fqdn":"vtatesthost5","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b005","role":"sdw"},{"fqdn":"vtatesthost6","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b006","role":"sdw"},{"fqdn":"vtatesthost7","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b007","role":"sdw"},{"fqdn":"vtatesthost8","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b008","role":"sdw"},{"fqdn":"vtatesthost9","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b009","role":"sdw"},{"fqdn":"vtatesthost10","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b010","role":"sdw"}]}]]></value>
+    </att>
+    <att name="cluster2" type="string" read-only="false">
+      <value encoded="n"><![CDATA[{"clusterId":"5ec29ee2-bd56-47ad-966d-7731af17b101","mdwId":"5ec29ee2-bd56-47ad-966d-7731af17b101","smdwId":"5ec29ee2-bd56-47ad-966d-7731af17b102","sdwIds":"test","members":[{"fqdn":"vtatesthost1","ipAddress":"1.1.1.1","id":"5ec29ee2-bd56-47ad-966d-7731af17b101","role":"mdw"},{"fqdn":"vtatesthost2","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b102","role":"smdw"},{"fqdn":"vtatesthost3","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b103","role":"sdw"},{"fqdn":"vtatesthost4","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b104","role":"sdw"},{"fqdn":"vtatesthost5","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b105","role":"sdw"},{"fqdn":"vtatesthost6","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b106","role":"sdw"},{"fqdn":"vtatesthost7","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b107","role":"sdw"},{"fqdn":"vtatesthost8","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b108","role":"sdw"},{"fqdn":"vtatesthost9","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b109","role":"sdw"},{"fqdn":"vtatesthost10","ipAddress":"1.1.1.2","id":"5ec29ee2-bd56-47ad-966d-7731af17b110","role":"sdw"}]}]]></value>
+    </att>
+    <att name="att0" type="string" read-only="false">
+      <value encoded="n"><![CDATA[{"clusterId":"5ec29ee2-bd56-47ad-966d-7731af17b201","mdwId":"5ec29ee2-bd56-47ad-966d-7731af17b101","smdwId":"5ec29ee2-bd56-47ad-966d-7731af17b102","sdwIds":"test"}]]></value>
+    </att>
+  </atts>
+</config-element>

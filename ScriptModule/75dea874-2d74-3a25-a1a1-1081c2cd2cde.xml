@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Set" result-type="Any" api-version="6.0.0" id="75dea874-2d74-3a25-a1a1-1081c2cd2cde" version="2.4.3" allowed-operations="vef" category-name="com.vmware.pscoe.library.ecmascript">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Set = /** @class */ (function () {
+    function Set(values) {
+        this.size = 0;
+        this.items = {};
+        if (values) {
+            for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
+                var value = values_1[_i];
+                this.items[value] = true;
+                this.size++;
+            }
+        }
+    }
+    Set.prototype.entries = function () {
+        var entries = [];
+        for (var value in this.items) {
+            entries.push([value, value]);
+        }
+        return entries;
+    };
+    Set.prototype.keys = function () {
+        return this.values();
+    };
+    Set.prototype.values = function () {
+        var values = [];
+        for (var value in this.items) {
+            values.push(value);
+        }
+        return values;
+    };
+    Set.prototype.has = function (value) {
+        return this.items.hasOwnProperty(value);
+    };
+    Set.prototype.add = function (value) {
+        this.items[value] = true;
+        return this;
+    };
+    Set.prototype.delete = function (value) {
+        var exist = this.items.hasOwnProperty(value);
+        if (exist) {
+            this.size--;
+            delete this.items[value];
+        }
+        return exist;
+    };
+    Set.prototype.clear = function () {
+        this.size = 0;
+        this.items = {};
+    };
+    Set.prototype.forEach = function (callbackfn) {
+        for (var value in this.items) {
+            callbackfn(value, value, this);
+        }
+    };
+    return Set;
+}());
+return VROES.export().default(Set).build();
+]]></script>
+</dunes-script-module>

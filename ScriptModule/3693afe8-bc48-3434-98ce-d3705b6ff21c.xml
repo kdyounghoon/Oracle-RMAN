@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Locking" result-type="Any" api-version="6.0.0" id="3693afe8-bc48-3434-98ce-d3705b6ff21c" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var WorkflowUtil = VROES.import("WorkflowUtil").from("com.vmware.pscoe.library.ts.util.WorkflowUtil");
+function Synchronized(lockId) {
+    return function (target, propertyName, propertyDesciptor) {
+        propertyDesciptor = propertyDesciptor || Object.getOwnPropertyDescriptor(target, propertyName);
+        var method = propertyDesciptor.value;
+        propertyDesciptor.value = function () {
+            var _this = this;
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var currentLockId = lockId || target.constructor.descriptor.fullName;
+            return Locking.synchronize(currentLockId, function () { return method.apply(_this, args); });
+        };
+        target[propertyName] = propertyDesciptor.value;
+        return propertyDesciptor;
+    };
+}
+var Locking = /** @class */ (function () {
+    function Locking() {
+    }
+    Locking.lock = function (lockId) {
+        LockingSystem.retrieveAll().forEach(function (lockToken) {
+            var _a = lockToken.split(","), thisLockId = _a[0], thisOwner = _a[1];
+            if (lockId == thisLockId) {
+                try {
+                    if (!thisOwner || !WorkflowUtil.isAlive(thisOwner)) {
+                        LockingSystem.unlock(thisLockId, thisOwner);
+                    }
+                }
+                catch (_b) { }
+            }
+        });
+        var owner = workflow ? workflow.id : "";
+        LockingSystem.lockAndWait(lockId, owner);
+    };
+    Locking.unlock = function (lockId) {
+        var owner = workflow ? workflow.id : "";
+        LockingSystem.unlock(lockId, owner);
+    };
+    Locking.synchronize = function (lockId, callback) {
+        try {
+            Locking.lock(lockId);
+            return callback();
+        }
+        finally {
+            Locking.unlock(lockId);
+        }
+    };
+    return Locking;
+}());
+return VROES.export().named("Synchronized", Synchronized).named("Locking", Locking).build();
+]]></script>
+</dunes-script-module>

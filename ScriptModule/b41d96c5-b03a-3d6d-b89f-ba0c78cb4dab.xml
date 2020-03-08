@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="NFSService" result-type="Any" api-version="6.0.0" id="b41d96c5-b03a-3d6d-b89f-ba0c78cb4dab" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.NFS">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var SSHService = VROES.import("SSHService").from("com.vmware.pscoe.skhynix.rman.NFS.SSHService");
+var NFSService = /** @class */ (function () {
+    function NFSService() {
+        this.configAccessor = new RMANConfigAccessor();
+        this.initSSH();
+        this.initNFS();
+    }
+    NFSService.prototype.getFileList = function () {
+        return this.fileList;
+    };
+    NFSService.prototype.isNFSmounted = function () {
+        var isMounted = false;
+        try {
+            this.sshHost.executeCommand("df -haT | grep nfs");
+            isMounted = true;
+        }
+        catch (_a) { }
+        return isMounted;
+    };
+    NFSService.prototype.initNFS = function () {
+        if (!this.isNFSmounted()) {
+            try {
+                this.sshHost.executeCommand("mkdir -p \"" + this.configAccessor.nfsClientFolder + "\"");
+                this.sshHost.executeCommand("mount \"" + this.configAccessor.nfsServer + "\":\"" + this.configAccessor.nfsServerShare + "\" \"" + this.configAccessor.nfsClientFolder + "\"");
+            }
+            catch (_a) { }
+        }
+        this.updateFileList();
+    };
+    NFSService.prototype.initSSH = function (hostname, username, password, port) {
+        if (Utils.isDefined(this.sshHost)) {
+            this.closeSsh();
+        }
+        this.sshHost = new SSHService(hostname, username, password, port);
+        this.sshHost.openSession();
+    };
+    NFSService.prototype.unmount = function () {
+        if (this.isNFSmounted()) {
+            this.sshHost.executeCommand("umount -f -l \"" + this.configAccessor.nfsClientFolder + "\"");
+            System.log("Unmounted " + this.configAccessor.nfsClientFolder + " from the ssh host");
+        }
+        else {
+            System.log("The NFS share is not mounted!");
+        }
+    };
+    NFSService.prototype.updateFileList = function () {
+        this.fileList = this.sshHost.executeCommand("ls " + this.configAccessor.nfsClientFolder).output.toString().split("\n");
+        this.fileList.shift();
+        this.fileList.pop();
+    };
+    NFSService.prototype.closeSsh = function () {
+        this.sshHost.closeSession();
+    };
+    return NFSService;
+}());
+return VROES.export().named("NFSService", NFSService).build();
+]]></script>
+</dunes-script-module>

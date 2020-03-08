@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="GuestOpsExecutor" result-type="Any" api-version="6.0.0" id="1979cda7-5d57-36d9-a171-a7865b2d335a" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.guestops">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var ResourceElementAccessor = VROES.import("ResourceElementAccessor").from("com.vmware.pscoe.library.ts.util.ResourceElementAccessor");
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var GuestOpsExecutor = /** @class */ (function () {
+    function GuestOpsExecutor(dcName, vmName) {
+        this.config = new RMANConfigAccessor();
+        this.scriptArguments = {};
+        var dc = this.config.vCenterHost.getAllDatacenters(null, "xpath:matches(name, '" + dcName + "')").shift();
+        var vcVms = System.getModule("com.vmware.library.vc.folder").getAllVirtualMachinesByFolderIncludingSubFolders(dc.vmFolder);
+        this.vm = vcVms.filter(function (el) {
+            return el.name === vmName;
+        }).shift();
+        this.createGuestOps();
+    }
+    GuestOpsExecutor.prototype.runScriptFromVRO = function (scriptName, args) {
+        var tmpDir = this.config.guestOStempDir + scriptName + ".sh";
+        System.log("tmpDir: " + tmpDir);
+        this.uploadRMANscriptToGuest();
+        this.guestOps.uploadContentToGuest(this.replaceParamsFromConfig(this.getScriptContent(), this.getConfigParams()), tmpDir);
+        var scriptResult = this.guestOps.runUploadedScript(tmpDir, args, "bash");
+        if (scriptResult.exitCode !== 0 && scriptResult.stdErr) {
+            throw new Error(scriptResult.stdErr);
+        }
+        return {
+            output: scriptResult.stdOut,
+            error: scriptResult.stdErr
+        };
+    };
+    GuestOpsExecutor.prototype.runScriptFromGuest = function (scriptPath, args) {
+        this.guestOps.runScript(scriptPath, args, "bash");
+    };
+    GuestOpsExecutor.prototype.uploadRMANscriptToGuest = function () {
+        this.guestOps.uploadResourceElementToGuest("SKHynix/RMAN/backupScript.sh", this.config.guestOStempDir + "backupScript.sh");
+    };
+    GuestOpsExecutor.prototype.getConfigParams = function () {
+        var _this = this;
+        var props = this.scriptArguments;
+        var elNames = this.config.getNames();
+        elNames.forEach(function (name) {
+            props[name] = _this.config.get(name);
+        });
+        props["scriptPath"] = this.config.guestOStempDir + "backupScript.sh";
+        return props;
+    };
+    GuestOpsExecutor.prototype.setScriptArguments = function (args) {
+        var _this = this;
+        if (!Utils.isDefined(this.scriptArguments)) {
+            this.scriptArguments = {};
+        }
+        if (!Utils.isEmpty(this.scriptArguments)) {
+            Object.keys(this.scriptArguments).forEach(function (arg) {
+                delete _this.scriptArguments[arg];
+            });
+        }
+        for (var i = 0; i < args.length; i++) {
+            this.scriptArguments["arg" + (i + 1)] = args[i];
+        }
+    };
+    GuestOpsExecutor.prototype.replaceParamsFromConfig = function (script, params) {
+        System.log("Input text: " + script);
+        Object.keys(params).forEach(function (key) {
+            var value = params[key];
+            var re = new RegExp("{" + key + "}", "g");
+            script = script.replace(re, value);
+        });
+        System.log("Output text: " + script);
+        return script;
+    };
+    GuestOpsExecutor.prototype.createGuestOps = function () {
+        this.guest = System.getModule("com.vmware.pscoe.library.guestops").Guest(this.vm, this.config.guestOSusername, this.config.guestOSpassword);
+        this.guestOps = System.getModule("com.vmware.pscoe.library.guestops").GuestOperations(this.guest);
+    };
+    GuestOpsExecutor.prototype.getScriptContent = function () {
+        return new ResourceElementAccessor("SKHynix/RMAN/rmanRecovery.sh").getContent();
+    };
+    return GuestOpsExecutor;
+}());
+return VROES.export().named("GuestOpsExecutor", GuestOpsExecutor).build();
+]]></script>
+</dunes-script-module>

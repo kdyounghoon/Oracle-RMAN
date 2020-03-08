@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="AsyncWorkflowExecutor" result-type="Any" api-version="6.0.0" id="56a49359-5b60-3274-830a-b4717ea78f05" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Future = VROES.import("Future").from("com.vmware.pscoe.library.ts.util.Future");
+var WorkflowUtil = VROES.import("WorkflowUtil").from("com.vmware.pscoe.library.ts.util.WorkflowUtil");
+var AsyncWorkflowExecutor = /** @class */ (function () {
+    function AsyncWorkflowExecutor() {
+        throw new Error("Private constructor");
+    }
+    AsyncWorkflowExecutor.execute = function (workflowOrId, properties, uname, pwd) {
+        var workflow = typeof workflowOrId == "string" ? Server.getWorkflowWithId(workflowOrId) : workflowOrId;
+        var token = workflow.execute(properties || new Properties(), uname, pwd);
+        return new WorkflowFuture(token);
+    };
+    AsyncWorkflowExecutor.executeByFqn = function (fqn, properties, uname, pwd) {
+        var workflow = WorkflowUtil.findByFqn(fqn, true);
+        return AsyncWorkflowExecutor.execute(workflow, properties, uname, pwd);
+    };
+    return AsyncWorkflowExecutor;
+}());
+var WorkflowFuture = /** @class */ (function (_super) {
+    __extends(WorkflowFuture, _super);
+    function WorkflowFuture(token) {
+        var _this = _super.call(this) || this;
+        _this.token = token;
+        return _this;
+    }
+    WorkflowFuture.prototype.toString = function () {
+        return this.token.name;
+    };
+    WorkflowFuture.prototype.checkCompleted = function () {
+        if (!WorkflowUtil.isAlive(this.token)) {
+            if (this.token.state != "completed") {
+                this.error = new Error(this.token.exception || "Error executing workflow " + this.token.name);
+            }
+            else {
+                this.value = this.token.getOutputParameters();
+            }
+            return true;
+        }
+        return false;
+    };
+    return WorkflowFuture;
+}(Future));
+return VROES.export().named("AsyncWorkflowExecutor", AsyncWorkflowExecutor).build();
+]]></script>
+</dunes-script-module>

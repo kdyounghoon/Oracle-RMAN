@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="LoggingConfig" result-type="Any" api-version="6.0.0" id="d857e3bb-1cf2-3a2b-b2b0-3cbcfed674e9" version="3.1.9" allowed-operations="vef" category-name="com.vmware.pscoe.library.logging.install.handlers">
+  <script encoded="false"><![CDATA[var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+
+var ObjectWrapper = Class.load("com.vmware.pscoe.library.util", "ObjectWrapper");
+var LoggerConfiguration = Class.load("com.vmware.pscoe.library.logging.configuration", "LoggerConfiguration");
+
+return Class.define(function LoggingConfig() {
+    /* empty */
+}, {
+    configure: function (input) {
+        input.readComposite("logging").polymorphic().then(function (logConfig) {
+            var cfg = new LoggerConfiguration();
+            cfg.loadWithDefaults();
+
+            var wrapper = new ObjectWrapper(cfg);
+            wrapper.merge(false, logConfig);
+            cfg.save(cfg);
+        });
+    }
+});
+]]></script>
+</dunes-script-module>

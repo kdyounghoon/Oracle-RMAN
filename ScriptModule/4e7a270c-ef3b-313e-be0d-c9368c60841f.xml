@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="GuestBase" result-type="Any" api-version="6.0.0" id="4e7a270c-ef3b-313e-be0d-c9368c60841f" version="1.2.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.guestops">
+  <script encoded="false"><![CDATA[var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+var ResourceElementAccessor = System.getModule("com.vmware.pscoe.library.util").ResourceElementAccessor();
+var PROFILES_CATEGORY_PATH = "PSCoE/Library/GuestOperations";
+
+var VMWARE_IMC_LOG_DIR = {
+	LINUX: "/var/log/vmware-imc",
+	WINDOWS: "c:\\Windows\\Temp\\vmware-imc"
+};
+
+/**
+ * @param {VC:VirtualMachine} vCenterVm - vCenter (vSphere) virtual machine
+ * @param {string} username - used for authentication with the virtual machine
+ * @param {SecureString} password - used for authentication with the virtual machine
+ * @param {Any} options - options that can be set during creation. Can contain the following:
+ *				{
+ *				 guestTools:{
+ *				     timeout: {number | 5}, - timeout in minutes before throwing exception
+ *				     retryCount: {number | 1}, - number of times to retry operation before throw an error
+ *				     retrySleep: {number | 10}, - sleep between retry or pulling operations in seconds
+ *				 },
+ *				 skipHeartbeatCheck: {boolean | false}, - skip hearth beat check while checking for running tools
+ *				 workingDirectory: {string | ""}, - working directory for running scripts. Default is temp directory.
+ *				 tmpDirectory: {string | ""}, - temporary directory for uploading and running scripts.
+ *				 								Default is loaded from resource element.
+ *				 environment: {Array | []}, - environment for running scripts
+ *				 cleanUpGuest: {boolean | true} - clean up virtual machine after running scripts
+ *				}
+ * @return {Class}
+ */
+return Class.define(function GuestBase(vCenterVm, username, password, options) {
+	System.getModule("com.vmware.pscoe.library.util").validateInput(vCenterVm,
+		"Virtual Machine input parameter missing or null");
+	this.vCenterVm = vCenterVm;
+	System.getModule("com.vmware.pscoe.library.util").validateInput(username, "Username input parameter missing or null");
+	this.username = username;
+	System.getModule("com.vmware.pscoe.library.util").validateInput(password, "Password input parameter missing or null");
+	this.password = password;
+
+	this.options = {
+		guestTools: {
+			timeout: 5,
+			retryCount: 1,
+			retrySleep: 10
+		},
+		skipHeartbeatCheck: false,
+		workingDirectory: "",
+		tmpDirectory: "",
+		environment: [],
+		cleanUpGuest: true
+	};
+	if (!!options) { //save check for not undefined/null/{}
+		if (!!options.guestTools) {
+			Object.keys(options.guestTools).forEach(function (key) {
+				if (!!options.guestTools[key]) {
+					this.options.guestTools[key] = options.guestTools[key];
+				}
+			}, this);
+		}
+		Object.keys(options).forEach(function (key) {
+			if (key != "guestTools") {
+				this.options[key] = options[key];
+			}
+		}, this);
+	}
+
+	this.guestAuth = new VcNamePasswordAuthentication();
+	this.guestAuth.username = this.username;
+	this.guestAuth.password = this.password;
+	this.guestAuth.interactiveSession = false;
+
+	this.host = this.vCenterVm.sdkConnection;
+	this.guestOperationsManager = this.host.guestOperationsManager;
+	this.processManager = this.guestOperationsManager.processManager;
+	this.fileManager = this.guestOperationsManager.fileManager;
+}, {
+	/**
+	 * Obtain VMware IMC log directory from virtual machine guest family
+	 * @param guestFamily
+	 * @return {string}
+	 */
+	getVMwareImcLogDir: function (guestFamily) {
+		return guestFamily.toLowerCase().indexOf("win") >= 0 ?
+			VMWARE_IMC_LOG_DIR.WINDOWS : VMWARE_IMC_LOG_DIR.LINUX;
+	},
+	/**
+	 * Sets the maximum time (in minutes) to wait for VMware Tools to start before
+	 * performing any operation on the guest. Defaults to 5 minutes.
+	 *
+	 * If the timeout is set to a negative number or 0, each guest operation will
+	 * instantly throw an exception if VMware Tools are not running on the VM.
+	 *
+	 * @param {number} timeout
+	 */
+	setGuestToolsTimeout: function (timeout) {
+		this.options.guestTools.timeout = timeout;
+	},
+	/**
+	 * Sets default retry count and sleep interval for VMware tools operations
+	 *
+	 * @param {number} count
+	 * @param {number} sleep - in seconds
+	 */
+	setGuestToolsRetry: function (count, sleep) {
+		this.options.guestTools.retryCount = this.options.guestTools.retryCount || count;
+		this.options.guestTools.retrySleep = this.options.guestTools.retrySleep || sleep;
+	},
+	/**
+	 * Sets the working directory
+	 * @param {string} argWorkingDirectory
+	 */
+	setWorkingDirectory: function (argWorkingDirectory) {
+		this.options.workingDirectory = argWorkingDirectory;
+	},
+	/**
+	 * Sets the temp directory
+	 * @param {string} argTmpDirectory
+	 */
+	setTmpDirectory: function (argTmpDirectory) {
+		this.options.tmpDirectory = argTmpDirectory;
+	},
+	/**
+	 * Sets the environment variables to be added to the orginial environment
+	 * @param {Array} argEnvironment
+	 */
+	setEnvironment: function (argEnvironment) {
+		this.options.environment = argEnvironment;
+	},
+	/**
+	 * Sets the flag whether or not to cleanup the guest os from logs and scripts after script execution. Defaults to true
+	 * @param {boolean} argCleanUpGuest
+	 */
+	setCleanUpGuest: function (argCleanUpGuest) {
+		this.options.cleanUpGuest = argCleanUpGuest;
+	},
+	/**
+	 * Get source path for a file located in the temp directory of vRO
+	 * @param {string} fileName
+	 * @return {string}
+	 */
+	getSrcPath: function (fileName) {
+		var vroTempFolder = System.getTempDirectory();
+		return (vroTempFolder + "/" + fileName);
+	},
+	/**
+	 * Get profile configuration by profile name
+	 * @param {string} profileName
+	 * @return {Any} - JSON object representing the profile configuration
+	 */
+	getProfileByName: function (profileName) {
+		var re = new ResourceElementAccessor(PROFILES_CATEGORY_PATH, profileName);
+		System.getModule("com.vmware.pscoe.library.util").validateInput(re, "Profile with name: "
+			+ profileName + " not found in category: " + PROFILES_CATEGORY_PATH);
+		return re.asJSON();
+	}
+});
+]]></script>
+</dunes-script-module>

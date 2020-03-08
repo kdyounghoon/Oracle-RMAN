@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='1e862838-a615-304b-8401-8d2532564c64'&dunesName='Action'&name='AssertValidator'&category='com.vmware.pscoe.library.validator']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='de93c6ca-6aad-3e6a-ab81-60d2606fd434'&dunesName='Action'&name='MsgValidator'&category='com.vmware.pscoe.library.validator']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='0ec96ce6-507f-3c69-abae-b8376b4ac887'&dunesName='Action'&name='Validator'&category='com.vmware.pscoe.library.validator']]></elm>
+</package>

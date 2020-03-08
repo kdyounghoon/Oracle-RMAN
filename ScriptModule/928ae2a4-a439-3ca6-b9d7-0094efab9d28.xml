@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="removeControlChars" result-type="Any" api-version="6.0.0" id="928ae2a4-a439-3ca6-b9d7-0094efab9d28" version="2.18.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.util">
+  <param n="str" t="Any"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[return str.replace(new RegExp("[\\b\\f\\n\\r\\t\\v\\0]", "g"), "");
+]]></script>
+</dunes-script-module>

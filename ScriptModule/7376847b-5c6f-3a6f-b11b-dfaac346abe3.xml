@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getPluginVersion" result-type="Any" api-version="6.0.0" id="7376847b-5c6f-3a6f-b11b-dfaac346abe3" version="2.18.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.util">
+  <description><![CDATA[Returns the version of an installed vRO plugin,
+or null if a plugin with the specified name was not found.]]></description>
+  <param n="name" t="String"><![CDATA[The name of the vRO plugin]]></param>
+  <script encoded="false"><![CDATA[var plugins = Server.getAllPluginInfo();
+for (var i in plugins) {
+	var pluginInfo = plugins[i];
+    if (pluginInfo.name === name) {
+        return pluginInfo.version;
+    }
+}
+
+return null;
+]]></script>
+</dunes-script-module>

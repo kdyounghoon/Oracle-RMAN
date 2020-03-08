@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='4d351704-3a60-3275-bc9f-409416a37c1e'&dunesName='Action'&name='writeFile'&category='com.vmware.pscoe.library.filesystem']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='61e4ffa6-9380-3806-8399-cc9969688083'&dunesName='Action'&name='readFile'&category='com.vmware.pscoe.library.filesystem']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='87dad473-cbc9-36fe-8654-ae65d6df7ddd'&dunesName='Action'&name='CustomFile'&category='com.vmware.pscoe.library.filesystem']]></elm>
+</package>

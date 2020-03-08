@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Session" result-type="Any" api-version="6.0.0" id="00c81a6c-93b4-36d7-9744-3351d06f0b46" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Session = /** @class */ (function () {
+    function Session() {
+        var _this = this;
+        this.values = {};
+        var systemContext = System.getContext();
+        if (systemContext) {
+            (systemContext.parameterNames() || []).forEach(function (name) { return _this.values[name] = systemContext.getParameter(name); });
+        }
+        if (workflow) {
+            var attributes_1 = workflow.getAttributes();
+            (attributes_1.keys || []).forEach(function (name) { return _this.values[name] = attributes_1.get(name); });
+            var inputParameters_1 = workflow.getInputParameters();
+            (inputParameters_1.keys || []).forEach(function (name) { return _this.values[name] = inputParameters_1.get(name); });
+        }
+    }
+    Session.prototype.names = function () {
+        var names = [];
+        for (var name in this.values) {
+            names.push(name);
+        }
+        return names;
+    };
+    Session.prototype.get = function (name) {
+        return this.values[name];
+    };
+    Session.prototype.set = function (name, value) {
+        this.values[name] = value;
+    };
+    Session.prototype.setAll = function (state) {
+        if (state) {
+            for (var name in state) {
+                this.set(name, state[name]);
+            }
+        }
+    };
+    Session.prototype.has = function (name) {
+        return this.values[name] != null;
+    };
+    Object.defineProperty(Session, "current", {
+        get: function () {
+            var systemContext = System.getContext();
+            return systemContext.__session__ || (systemContext.__session__ = new Session());
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Session;
+}());
+return VROES.export().named("Session", Session).build();
+]]></script>
+</dunes-script-module>

@@ -1,0 +1,328 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="GuestManager" result-type="Any" api-version="6.0.0" id="e4928754-e3db-3c40-a3f0-b1288ac05430" version="1.2.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.guestops">
+  <script encoded="false"><![CDATA[var logger = System.getModule("com.vmware.pscoe.library.logging")
+	.getLogger("com.vmware.pscoe.library.guestops/GuestManager");
+
+var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+var GuestBase = Class.load("com.vmware.pscoe.library.guestops", "GuestBase");
+var Func = System.getModule("com.vmware.pscoe.library.util").Func();
+
+return Class.define(function GuestManager(vCenterVm, username, password, options) {
+	GuestBase.call(this, vCenterVm, username, password, options);
+}, {
+	/**
+	 * Retry running a function several times before throwing an error
+	 * @param {function} callback - named function, the name of the function is used for logging and error tracking
+	 * @return {Any}
+	 */
+	retry: function (callback) {
+		if (!callback || typeof callback !== "function") {
+			throw new Error("Please provide a named function callback.");
+		}
+
+		if (!callback.name) {
+			throw new Error("Anonymous function are note supported!");
+		}
+
+		var errorReport = {
+			GuestOperationName: callback.name,
+			errors: {}
+		};
+
+		var retryCount = this.options.guestTools.retryCount;
+		var retrySleepTime = this.options.guestTools.retrySleep;
+
+		for (var i = 1; i <= retryCount; i++) {
+			try {
+				this.waitGuestTools();
+				return callback();
+			} catch (e) {
+				errorReport.errors[i] = e;
+				logger.error("Guest operation failed with error:" + e);
+				logger.info("Guest operation Retry[" + i + "/" +
+					retryCount + "] after Seconds[" + retrySleepTime + "]");
+
+				System.sleep(retrySleepTime * 1000);
+			}
+		}
+
+		throw new Error(JSON.stringify(errorReport, null, 4));
+	},
+
+	/**
+	 * Wait for VMware tools to become ready
+	 */
+	waitGuestTools: function () {
+		if (this.options.guestTools.timeout < 1 || this.isGuestToolsRunning()) {
+			return;
+		}
+
+		var endDate = new Date();
+		endDate.setMinutes(endDate.getMinutes() + this.options.guestTools.timeout);
+		logger.info("Waiting up to " + this.options.guestTools.timeout
+			+ " minutes for VMware Tools to become available on the guest...");
+		while (true) {
+			var guestToolsStatus = this.vCenterVm.guest.toolsRunningStatus;
+			logger.debug("\tCurrent status of VMware Tools: " + guestToolsStatus);
+			logger.debug("Is running: " + this.isGuestToolsRunning());
+			if (this.isGuestToolsRunning()) {
+				break;
+			} else if (endDate.getTime() < (new Date()).getTime()) {
+				throw new Error("VMware Tools on VM " + this.vCenterVm.name + " did not start in timely manner.");
+			}
+			System.sleep(10000);
+		}
+	},
+
+	/**
+	 * Wait for DNS name to become available
+	 *
+	 * @param dnsNameToWait DNS name to wait (optional)
+	 */
+	waitDnsName: function (dnsNameToWait) {
+		this.waitGuestTools();
+		dnsNameToWait = dnsNameToWait ? dnsNameToWait : this.vCenterVm.name;
+		logger.info("Waiting up to " + this.options.guestTools.timeout + " minutes for DNS name '" + dnsNameToWait + "' to become available on the guest...");
+		Func.retryWithTimeout(function () {
+			var hostname = this.vCenterVm.guest.hostName;
+			logger.debug("\tCurrent hostname is: " + hostname);
+			return hostname;
+		}.bind(this), function (hostname, error) {
+			if (error) {
+				throw new Error("Unable to get hostname: " + error);
+			}
+
+			var matchingFqdn = hostname && hostname.toLowerCase() === dnsNameToWait.toLowerCase();
+			var matchingHostname = hostname && hostname.split('.')[0].toLowerCase() === dnsNameToWait.split('.')[0].toLowerCase();
+			return matchingFqdn || matchingHostname;
+		}.bind(this), this.options.guestTools.timeout * 60, 10);
+	},
+
+	/**
+	 * Checks if VMware Tools are running in the guest.
+	 *
+	 * This check is automatically performed before each guest operation. If the guest tools
+	 * are not running, the operation is blocked until they become available or until a
+	 * timeout is reached. The timeout is configurable via `setGuestToolsTimeout()`.
+	 *
+	 * @returns `true` if VMware Tools are running in the guest; `false` otherwise
+	 */
+	isGuestToolsRunning: function () {
+		var status = VcVirtualMachineToolsRunningStatus.fromString(this.vCenterVm.guest.toolsRunningStatus);
+		if (this.options && this.options.skipHeartbeatCheck) {
+			return status == VcVirtualMachineToolsRunningStatus.guestToolsRunning;
+		}
+		return status == VcVirtualMachineToolsRunningStatus.guestToolsRunning &&
+			this.vCenterVm.guestHeartbeatStatus == VcManagedEntityStatus.green;
+	},
+
+	/**
+	 * Transfers a file from the local vRO file system at the specified location srcPath in the guest at the destPath location
+	 *
+	 * @param srcPath vRO file location
+	 * @param destPath guest os file location
+	 * @param filePermissions guest os file permissions
+	 */
+	transferFileToGuest: function (srcPath, destPath, filePermissions) {
+		System.getModule("com.vmware.pscoe.library.util").validateInput(srcPath, "Source path input parameter missing or null");
+		System.getModule("com.vmware.pscoe.library.util").validateInput(destPath, "Dest path input parameter missing or null");
+		var guestFileAttributes = new VcGuestFileAttributes();
+
+		if (!filePermissions) {
+			logger.debug("No permissions were set.");
+		} else if (System.getModule("com.vmware.library.vc.vm.os").isWindowsOsInVm(this.vCenterVm)) {
+			logger.warn("Permission: " + filePermissions + " cannot be set on windows machine.");
+		} else {
+			logger.info("Setting file permissions: " + filePermissions);
+			guestFileAttributes = new VcGuestPosixFileAttributes();
+			guestFileAttributes.permissions = filePermissions;
+		}
+
+		var self = this;
+		var result = this.retry(function transferFileToGuest() {
+			var srcFile = new File(srcPath);
+			var uri = self.fileManager.initiateFileTransferToGuest(self.vCenterVm, self.guestAuth,
+				destPath, guestFileAttributes, srcFile.length, true);
+			return self.fileManager.putFile(srcPath, uri);
+		});
+
+		if (!result) {
+			throw new Error("Could not transfer vRO file '" + srcPath + "' to guest at '" + destPath + "'");
+		}
+	},
+
+	/**
+	 * Creates folder under specified directory
+	 *
+	 * @param destPath guest os file location
+	 */
+	createFolderInGuest: function (destPath) {
+		System.getModule("com.vmware.pscoe.library.util").validateInput(destPath, "Dest path input parameter missing or null");
+
+		var self = this;
+		this.retry(function createFolderInGuest() {
+			try {
+				self.fileManager.makeDirectoryInGuest(self.vCenterVm, self.guestAuth, destPath, true);
+			} catch (e) {
+				if ((e + "").indexOf("already exists") < 0) {
+					throw new Error("Could not create folder under guest at '" + destPath + "' : " + e + e.stack);
+				}
+			}
+		});
+	},
+
+	/**
+	 * Runs a command programPath with the specified arguments in the specified workingDirectory with the specified environment variables
+	 *
+	 * @param programPath
+	 * @param args
+	 * @param workingDirectory
+	 * @param environment
+	 */
+	executeCommand: function (programPath, args, workingDirectory, environment) {
+		System.getModule("com.vmware.pscoe.library.util").validateInput(programPath, "Program path input parameter missing or null");
+		System.getModule("com.vmware.pscoe.library.util").validateInput(args, "Arguments path input parameter missing or null");
+
+		var guestProgramSpec = new VcGuestProgramSpec();
+		guestProgramSpec.programPath = programPath;
+		guestProgramSpec.arguments = args;
+		guestProgramSpec.workingDirectory = workingDirectory || "";
+		guestProgramSpec.envVariables = environment || [];
+
+		var self = this;
+		return this.retry(function executeCommand() {
+			return self.processManager.startProgramInGuest(self.vCenterVm, self.guestAuth, guestProgramSpec);
+		});
+	},
+
+	/**
+	 * Transfers a file from the guest os to the local vRO file system
+	 *
+	 * @param srcPath guest OS file location
+	 * @param destPath vRO file location
+	 */
+	downloadFileFromGuest: function (srcPath, destPath) {
+		System.getModule("com.vmware.pscoe.library.util").validateInput(srcPath, "Source path input parameter missing or null");
+		System.getModule("com.vmware.pscoe.library.util").validateInput(destPath, "Dest path input parameter missing or null");
+
+		var self = this;
+		var result = this.retry(function downloadFileFromGuest() {
+			var ftInfo = self.fileManager.initiateFileTransferFromGuest(self.vCenterVm, self.guestAuth, srcPath);
+			return self.fileManager.downloadFile(destPath, ftInfo);
+		});
+
+		if (!result) {
+			throw new Error("Could not transfer Guest file '" + srcPath + "' to vRO at '" + destPath + "'");
+		}
+	},
+
+	/**
+	 * Deletes a file in the specified filePath locaiton
+	 *
+	 * @param filePath
+	 */
+	deleteFileInGuest: function (filePath) {
+		System.getModule("com.vmware.pscoe.library.util").validateInput(filePath, "Path input parameter missing or null");
+
+		var self = this;
+		this.retry(function deleteFileInGuest() {
+			self.fileManager.deleteFileInGuest(self.vCenterVm, self.guestAuth, filePath);
+		});
+	},
+
+	/**
+	 * Find a process in guest by PID
+	 * @param pid
+	 * @return a Process object by the specified pid
+	 */
+	findGuestProcess: function (pid) {
+		var self = this;
+		var guestProcessInfo = this.retry(function findGuestProcess() {
+			return self.processManager.listProcessesInGuest(self.vCenterVm, self.guestAuth, null);
+		});
+
+		for (var iter in guestProcessInfo) {
+			var process = guestProcessInfo[iter];
+			if (process.pid === pid) {
+				return process;
+			}
+		}
+		return null;
+	},
+
+	/**
+	 *
+	 * @return returns the current guest environment variables
+	 */
+	getGuestEnvironment: function () {
+		var self = this;
+		return this.retry(function getGuestEnvironment() {
+			return self.processManager.readEnvironmentVariableInGuest(self.vCenterVm, self.guestAuth, null);
+		});
+	},
+
+	/**
+	 * Wait for Guest Customization to complete by monitoring vmware-imc logs
+	 * Success criteria - logs last modified time attribute has to be older than retrySleep value
+	 * The check will be performed up to retryCount value
+	 * Retry properties are configured by setGuestToolsRetry()
+	 *
+	 */
+	waitGuestCustomization: function () {
+		logger.info("Waiting for Guest Customization to complete. VMware-IMC logs has to be idle for Seconds["
+			+ this.options.guestTools.retrySleep + "]");
+
+		var imc = {
+			guestCustomization: {
+				message: "Customization completed when logs stay idle since Time.",
+				time: new Date(System.getCurrentTime() - this.options.guestTools.retrySleep * 1000),
+				completed: true
+			},
+			logs: {}
+		};
+
+		var vmwareImcState = "";
+
+		var self = this;
+		return this.retry(function waitGuestCustomization() {
+			var vmwareImc = self.getVMwareImcLogDir(self.vCenterVm.guest.guestFamily);
+			var vmwareImcFiles = null;
+			try {
+				vmwareImcFiles = self.fileManager.listFilesInGuest(self.vCenterVm, self.guestAuth, vmwareImc, 0, 100, ".*").files;
+			} catch (e) {
+				if (e.message.indexOf("was not found") >= 0) {
+					logger.warn("It does not seam that Guest Customization is running. " +
+						"The logging directory is does not exist. Error:" + e);
+					return;
+				}
+				throw e;
+			}
+
+			// Get current state of VMware IMC Logs
+			// Criteria - number of files, their names, last modified date
+			for (var index in vmwareImcFiles) {
+				var file = vmwareImcFiles[index];
+				// Skip parrent directory
+				if (file.path == "..") {
+					continue;
+				}
+				var lastModified = new Date(file.attributes.modificationTime);
+				imc.logs[file.path] = {
+					lastModified: lastModified
+				};
+				imc.guestCustomization.completed = imc.guestCustomization.completed && (imc.guestCustomization.time > lastModified);
+			}
+
+			var vmwareImcStateNext = JSON.stringify(imc.logs, null, 2);
+
+			if (vmwareImcState != vmwareImcStateNext) {
+				vmwareImcState = vmwareImcStateNext;
+				logger.debug("VMware IMC Logs:" + vmwareImcState);
+				throw new Error("Guest Customization is still logging...");
+			}
+			logger.info("Assume Guest Customization completed. Did not log anyting for Seconds[" + this.options.guestTools.retrySleep + "]");
+		});
+	}
+}, GuestBase);
+]]></script>
+</dunes-script-module>

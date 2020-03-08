@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="b2b63a6b-1ab8-4ff9-b26c-9c3d44c46762" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Test RAC ADD DISK</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="ScsiConNum" type="number"/>
+        <param name="DiskIndex" type="number"/>
+        <param name="diskSize" type="number"/>
+    </input>
+    <output/>
+    <attrib name="vm" type="VC:VirtualMachine">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:vm-2760'&amp;dunesName='VC:VirtualMachine'</value>
+    </attrib>
+    <attrib name="sharing" type="VC:VirtualDiskSharing">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="fileName" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="644.7058823529411"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item4" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false">var temp = new VcVirtualMachine();&#13;
+temp = vm;&#13;
+var test = temp.config.hardware.device&#13;
+//var diskBackingInfo = new VcVirtualDiskFlatVer2BackingInfo();&#13;
+for (var item in test){&#13;
+   // System.log(item)&#13;
+    var device = test[item];&#13;
+    if(device.key&gt;=2000 &amp;&amp; device.key&lt;3000){&#13;
+       // System.log("vim.vm.device.VirualDisk")&#13;
+       fileName = device.backing.fileName&#13;
+       System.log(device);&#13;
+       &#13;
+    }&#13;
+    if(device.key&gt;=1000 &amp;&amp; device.key&lt;2000){&#13;
+        //System.log("vim.vm.device.ParaVirtualSCSIController")&#13;
+        //System.log(device.busNumber)&#13;
+    }&#13;
+}&#13;
+&#13;
+</script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+        </in-binding>
+        <out-binding>
+            <bind name="sharing" type="VC:VirtualDiskSharing" export-name="sharing"/>
+            <bind name="fileName" type="string" export-name="fileName"/>
+        </out-binding>
+        <description>1st node --&gt; New Disk
+after node --&gt;  existing Disk</description>
+        <position y="60.58823529411765" x="198.8235294117647"/>
+    </workflow-item>
+    <workflow-item name="item3" type="end" end-mode="0" comparator="0">
+        <position y="203.52941176470588" x="380.0"/>
+    </workflow-item>
+    <workflow-item name="item4" out-name="item5" alt-out-name="item6" type="custom-condition" comparator="0">
+        <display-name>Create New DISK? or existing disk?</display-name>
+        <script encoded="false">return true;</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Custom decision based on a custom script.</description>
+        <position y="50.58823529411765" x="319.0"/>
+    </workflow-item>
+    <workflow-item name="item5" out-name="item0" type="link" comparator="0">
+        <display-name>Create New Disk</display-name>
+        <script encoded="false"></script>
+        <in-binding/>
+        <out-binding/>
+        <description> </description>
+        <position y="60.58823529411765" x="481.17647058823536"/>
+    </workflow-item>
+    <workflow-item name="item6" out-name="item3" type="link" comparator="0">
+        <display-name>Add existing Disk</display-name>
+        <script encoded="false"></script>
+        <in-binding/>
+        <out-binding/>
+        <description> </description>
+        <position y="131.1764705882353" x="316.47058823529414"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

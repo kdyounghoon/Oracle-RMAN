@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="addVirtualDiskFlatVer2ConfigSpec_all" result-type="Any" api-version="6.0.0" id="a0304888-5e83-424b-9d0d-580e8ad626c1" version="0.0.0" category-name="com.vmware.pso.util">
+  <param n="controllerKey" t="number"><![CDATA[]]></param>
+  <param n="diskIndex" t="number"><![CDATA[]]></param>
+  <param n="thinProvisioned" t="boolean"><![CDATA[]]></param>
+  <param n="diskMode" t="VC:VirtualDiskMode"><![CDATA[]]></param>
+  <param n="eagerlyScrub" t="boolean"><![CDATA[]]></param>
+  <param n="diskKey" t="number"/>
+  <param n="diskSharing" t="string"/>
+  <param n="fileName" t="string"/>
+  <script encoded="false"><![CDATA[// Create Disk BackingInfo
+var diskBackingInfo = new VcVirtualDiskFlatVer2BackingInfo();
+diskBackingInfo.sharing = diskSharing;
+diskBackingInfo.diskMode = diskMode.value;
+diskBackingInfo.fileName = fileName;
+diskBackingInfo.thinProvisioned = thinProvisioned;
+diskBackingInfo.eagerlyScrub = eagerlyScrub;
+var disk = new VcVirtualDisk();
+disk.backing = diskBackingInfo;
+disk.controllerKey = controllerKey; //Scsi (1)
+disk.key = diskKey;
+// Index 0 is not valid since Vi 4.0 (probably a bug)
+disk.unitNumber = diskIndex;  // ex Scsi 1:(diskndex)
+
+// add Disk ConfigSpec
+deviceConfigSpec = new VcVirtualDeviceConfigSpec();
+deviceConfigSpec.device = disk;
+deviceConfigSpec.operation = VcVirtualDeviceConfigSpecOperation.add;
+
+return deviceConfigSpec;]]></script>
+</dunes-script-module>

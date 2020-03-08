@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item8" object-name="workflow:name=generic" id="58448288-5116-4de4-b975-f9c0d9878891" version="0.0.0" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Create local user for RHEL]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="vm" type="VC:VirtualMachine">
+      <description><![CDATA[Virtual Machine (VC)]]></description>
+    </param>
+    <param name="username" type="string">
+      <description><![CDATA[Guest OS username]]></description>
+    </param>
+    <param name="password" type="SecureString">
+      <description><![CDATA[Guest OS password]]></description>
+    </param>
+    <param name="newUserPw" type="SecureString"/>
+    <param name="newUserName" type="string"/>
+  </input>
+  <output>
+    <param name="operationCompleted" type="boolean"/>
+  </output>
+  <attrib name="script" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Script Text]]></description>
+  </attrib>
+  <attrib name="scriptTimeout" type="number" read-only="false">
+    <value encoded="n"><![CDATA[120.0]]></value>
+    <description><![CDATA[Timeout for the running script (in second)]]></description>
+  </attrib>
+  <attrib name="scriptType" type="string" read-only="false">
+    <value encoded="n"><![CDATA[bash]]></value>
+    <description><![CDATA[bash / bat / powershell]]></description>
+  </attrib>
+  <attrib name="scriptOutputText" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Output of the script]]></description>
+  </attrib>
+  <attrib name="scriptExitCode" type="number" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+    <description><![CDATA[Exit code of the script]]></description>
+  </attrib>
+  <attrib name="encryptedPw" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="timeout" type="number" read-only="false">
+    <value encoded="n"><![CDATA[10.0]]></value>
+    <description><![CDATA[Timeout for the operation [min]]]></description>
+  </attrib>
+  <attrib name="interval" type="number" read-only="false">
+    <value encoded="n"><![CDATA[10.0]]></value>
+    <description><![CDATA[Interval for polling rate [s]]]></description>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="1224.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item4" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779">
+    <display-name><![CDATA[Run Script In Guest]]></display-name>
+    <in-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm">
+        <description><![CDATA[Virtual Machine (VC)]]></description>
+      </bind>
+      <bind name="username" type="string" export-name="username">
+        <description><![CDATA[Guest OS username]]></description>
+      </bind>
+      <bind name="password" type="SecureString" export-name="password">
+        <description><![CDATA[Guest OS password]]></description>
+      </bind>
+      <bind name="scriptType" type="string" export-name="scriptType">
+        <description><![CDATA[bash / bat / powershell]]></description>
+      </bind>
+      <bind name="script" type="string" export-name="script">
+        <description><![CDATA[Script Text]]></description>
+      </bind>
+      <bind name="scriptTimeout" type="number" export-name="scriptTimeout">
+        <description><![CDATA[Timeout for the running script (in second)]]></description>
+      </bind>
+      <bind name="scriptRefreshTime" type="number" explicitly-not-bound="true">
+        <description><![CDATA[(default) Time (in seconds) where a check of script status occurs]]></description>
+      </bind>
+      <bind name="scriptWorkingDirectory" type="string" explicitly-not-bound="true">
+        <description><![CDATA[Script working directory in the guest]]></description>
+      </bind>
+      <bind name="interactiveSession" type="boolean" explicitly-not-bound="true">
+        <description><![CDATA[Script context interactivity]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="scriptOutputText" type="string" export-name="scriptOutputText">
+        <description><![CDATA[Output of the script]]></description>
+      </bind>
+      <bind name="scriptExitCode" type="number" export-name="scriptExitCode">
+        <description><![CDATA[Exit code of the script]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Run a script inside the VM and wait until it returns his result.
+Retrieve the output of the script and returns it as output in the workflow
+
+Inspired by implementation done in PowerCLI in the following .NET class :
+- VMware.VimAutomation.ViCore.Impl.V1.RunScriptInGuestHelper
+- VMware.VimAutomation.ViCore.Impl.V1.Service.VmGuestServiceImpl
+
+Requires running VMwareTools instance in the GuestOS.
+Leverages the vSphere 5.x GuestOperationsManager object and is not backwards compatible with previous versions of vSphere.]]></description>
+    <position y="55.40909090909091" x="484.5"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item1" type="task">
+    <display-name><![CDATA[Construct Script for Password]]></display-name>
+    <script encoded="false"><![CDATA[script = "perl -e 'print crypt(\"" + newUserPw + "\", \"vmware\")'";
+
+System.log("Script to run is:" + script.replace(newUserPw,"******"));]]></script>
+    <in-binding>
+      <bind name="newUserPw" type="SecureString" export-name="newUserPw"/>
+    </in-binding>
+    <out-binding>
+      <bind name="script" type="string" export-name="script"/>
+    </out-binding>
+    <position y="55.40909090909091" x="344.5"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item0" type="task">
+    <display-name><![CDATA[Analyze output]]></display-name>
+    <script encoded="false"><![CDATA[operationCompleted = (scriptExitCode == 0);]]></script>
+    <in-binding>
+      <bind name="scriptOutputText" type="string" export-name="scriptOutputText"/>
+      <bind name="scriptExitCode" type="number" export-name="scriptExitCode"/>
+    </in-binding>
+    <out-binding>
+      <bind name="operationCompleted" type="boolean" export-name="operationCompleted"/>
+    </out-binding>
+    <position y="55.40909090909091" x="1044.5"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item5" type="task">
+    <display-name><![CDATA[Construct Script for new user]]></display-name>
+    <script encoded="false"><![CDATA[encryptedPw = scriptOutputText;
+script = "useradd -m -p " + encryptedPw + " " + newUserName + " -g " + newUserName + "\n";
+script += "usermod -aG wheel " + newUserName + "\n";
+script += "su " + newUserName +"\n";
+script += "yes | ssh-keygen -t rsa -b 4096 -f /home/" + newUserName + "/.ssh/id_rsa -N '' > /dev/null";
+script += "exit";]]></script>
+    <in-binding>
+      <bind name="scriptOutputText" type="string" export-name="scriptOutputText"/>
+      <bind name="scriptExitCode" type="number" export-name="scriptExitCode"/>
+      <bind name="newUserName" type="string" export-name="newUserName"/>
+    </in-binding>
+    <out-binding>
+      <bind name="script" type="string" export-name="script"/>
+      <bind name="encryptedPw" type="string" export-name="encryptedPw"/>
+    </out-binding>
+    <position y="55.40909090909091" x="624.5"/>
+  </workflow-item>
+  <workflow-item name="item5" out-name="item7" type="custom-condition" alt-out-name="item6">
+    <display-name><![CDATA[Custom decision]]></display-name>
+    <script encoded="false"><![CDATA[return (scriptExitCode == 0);]]></script>
+    <in-binding>
+      <bind name="scriptExitCode" type="number" export-name="scriptExitCode"/>
+    </in-binding>
+    <position y="45.40909090909091" x="764.5"/>
+  </workflow-item>
+  <workflow-item name="item6" type="end" end-mode="0">
+    <position y="109.04545454545453" x="804.5"/>
+  </workflow-item>
+  <workflow-item name="item7" out-name="item3" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779">
+    <display-name><![CDATA[Run Script In Guest]]></display-name>
+    <in-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm">
+        <description><![CDATA[Virtual Machine (VC)]]></description>
+      </bind>
+      <bind name="username" type="string" export-name="username">
+        <description><![CDATA[Guest OS username]]></description>
+      </bind>
+      <bind name="password" type="SecureString" export-name="password">
+        <description><![CDATA[Guest OS password]]></description>
+      </bind>
+      <bind name="scriptType" type="string" export-name="scriptType">
+        <description><![CDATA[bash / bat / powershell]]></description>
+      </bind>
+      <bind name="script" type="string" export-name="script">
+        <description><![CDATA[Script Text]]></description>
+      </bind>
+      <bind name="scriptTimeout" type="number" export-name="scriptTimeout">
+        <description><![CDATA[Timeout for the running script (in second)]]></description>
+      </bind>
+      <bind name="scriptRefreshTime" type="number" explicitly-not-bound="true">
+        <description><![CDATA[(default) Time (in seconds) where a check of script status occurs]]></description>
+      </bind>
+      <bind name="scriptWorkingDirectory" type="string" explicitly-not-bound="true">
+        <description><![CDATA[Script working directory in the guest]]></description>
+      </bind>
+      <bind name="interactiveSession" type="boolean" explicitly-not-bound="true">
+        <description><![CDATA[Script context interactivity]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="scriptOutputText" type="string" export-name="scriptOutputText">
+        <description><![CDATA[Output of the script]]></description>
+      </bind>
+      <bind name="scriptExitCode" type="number" export-name="scriptExitCode">
+        <description><![CDATA[Exit code of the script]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Run a script inside the VM and wait until it returns his result.
+Retrieve the output of the script and returns it as output in the workflow
+
+Inspired by implementation done in PowerCLI in the following .NET class :
+- VMware.VimAutomation.ViCore.Impl.V1.RunScriptInGuestHelper
+- VMware.VimAutomation.ViCore.Impl.V1.Service.VmGuestServiceImpl
+
+Requires running VMwareTools instance in the GuestOS.
+Leverages the vSphere 5.x GuestOperationsManager object and is not backwards compatible with previous versions of vSphere.]]></description>
+    <position y="55.40909090909091" x="904.5"/>
+  </workflow-item>
+  <workflow-item name="item8" out-name="item2" type="task" script-module="com.vmware.library.vc.vm.tools/vim3WaitForPrincipalIP">
+    <display-name><![CDATA[vim3WaitForPrincipalIP]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.vmware.library.vc.vm.tools").vim3WaitForPrincipalIP(vm,timeout,interval) ;]]></script>
+    <in-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm">
+        <description><![CDATA[VM to wait for IP]]></description>
+      </bind>
+      <bind name="timeout" type="number" export-name="timeout">
+        <description><![CDATA[Timeout for the operation [min]]]></description>
+      </bind>
+      <bind name="interval" type="number" export-name="interval">
+        <description><![CDATA[Interval for polling rate [s]]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="string" explicitly-not-bound="true" export-name="NULL"/>
+    </out-binding>
+    <description><![CDATA[Return IP if found. Else return empty string.
+Exception:
+- Timeout: timeout reached]]></description>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="vm">
+      <desc><![CDATA[Virtual Machine (VC)]]></desc>
+    </p-param>
+    <p-param name="username">
+      <desc><![CDATA[Guest OS username]]></desc>
+    </p-param>
+    <p-param name="password">
+      <desc><![CDATA[Guest OS password]]></desc>
+    </p-param>
+    <p-param name="newUserPw">
+      <desc><![CDATA[newUserPw]]></desc>
+    </p-param>
+    <p-param name="newUserName">
+      <desc><![CDATA[newUserName]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

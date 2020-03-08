@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="convertCsvToJSON" result-type="Any" api-version="6.0.0" id="ba0d324f-d238-36af-a231-ff4f902d8f0d" version="2.18.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.util">
+  <param n="content" t="Any"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var CSVFile = System.getModule("com.vmware.pscoe.library.util").CSVFile();
+return CSVFile.parse(content, {
+	match: /[^\r\n]+/g
+}).toJson();
+]]></script>
+</dunes-script-module>

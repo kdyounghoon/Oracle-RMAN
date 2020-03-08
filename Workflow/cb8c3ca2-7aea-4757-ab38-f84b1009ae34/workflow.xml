@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="cb8c3ca2-7aea-4757-ab38-f84b1009ae34" version="0.0.0" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[GPDB Cluster Blueprint Requested]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="payload" type="Properties"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="524.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[var gpdbClusters;
+var cat = Server.getConfigurationElementCategoryWithPath("Samsung Bigdata");
+if (cat){
+	for each (e in cat.configurationElements){
+		if (e.name == "GPDB Clusters"){
+			gpdbClusters = e;
+			break;
+		}
+	}
+}
+
+//create new configuration element if cannot find existing one
+if (!gpdbClusters){
+	gpdbClusters = Server.createConfigurationElement("Samsung Bigdata/GPDB Clusters");
+}
+
+//create cluster info with empty member info in the configuration element
+gpdbClusters.setAttributeWithKey(payload.catalogRequestId , JSON.stringify({deploymentId:payload.deploymentId, clusterId:payload.catalogRequestId, members:[]}), "String");]]></script>
+    <in-binding>
+      <bind name="payload" type="Properties" export-name="payload"/>
+    </in-binding>
+    <out-binding/>
+    <position y="55.40909090909091" x="344.5"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item1" type="task">
+    <display-name><![CDATA[Locking]]></display-name>
+    <script encoded="false"><![CDATA[while (getRuns()[0].id != workflow.id)
+{
+System.sleep(1000);
+}
+function byDate(a,b)
+{
+var A = a.startDateAsDate.getTime();
+var B = b.startDateAsDate.getTime();
+return (A > B);
+}
+function getRuns()
+{
+var tokens = workflow.rootWorkflow.executions;
+var temp = new Array();
+for each (var token in tokens)
+{
+if ((token.state == "running") ||
+((token.state == "waiting")) ||
+((token.state == "waiting-signal"))) temp.push(token);
+}
+temp = temp.sort(byDate);
+return temp;
+}]]></script>
+    <in-binding/>
+    <out-binding/>
+    <position y="55.40909090909091" x="204.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="payload">
+      <desc><![CDATA[payload]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

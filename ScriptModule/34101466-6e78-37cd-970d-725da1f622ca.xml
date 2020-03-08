@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="GuestOpsManager" result-type="Any" api-version="6.0.0" id="34101466-6e78-37cd-970d-725da1f622ca" version="1.2.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.guestops">
+  <script encoded="false"><![CDATA[var logger = System.getModule("com.vmware.pscoe.library.logging")
+	.getLogger("com.vmware.pscoe.library.guestops.GuestOperations");
+var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+var ResourceElementAccessor = System.getModule("com.vmware.pscoe.library.util").ResourceElementAccessor();
+var AsyncProcess = Class.load("com.vmware.pscoe.library.guestops", "AsyncProcess");
+
+return Class.define(function (inGuest) {
+	this.guest = inGuest;
+	var asyncProcesses = [];
+
+	var executeScriptAsync = function (destPath, fileName, args, profile) {
+		var vars = {
+			scriptPath: destPath,
+			stdOutPath: destPath + ".out",
+			stdErrPath: destPath + ".err",
+			args: args
+		};
+		var runScriptArguments = System.getModule("com.vmware.pscoe.library.templates.engines").mark(profile.runScriptArguments, vars);
+		var originalEnvironment = this.guest.getGuestEnvironment();
+		var newEnvironment = this.guest.options.environment ? originalEnvironment.concat(this.guest.options.environment) : originalEnvironment;
+		var programPath = profile.scriptProgram;
+		var pid = this.guest.executeCommand(programPath, runScriptArguments, this.guest.options.workingDirectory, newEnvironment);
+		var endDate = new Date();
+		endDate.setMinutes(endDate.getMinutes() + this.guest.options.guestTools.timeout);
+		var processObject = new AsyncProcess(this.guest, this, pid, endDate, vars, fileName);
+		logger.info("Started async process...");
+		asyncProcesses.push(processObject);
+		return processObject;
+	}.bind(this);
+
+	var executeScript = function (destPath, fileName, args, profile) {
+		var processObject = executeScriptAsync(destPath, fileName, args, profile);
+		asyncProcesses.splice(asyncProcesses.indexOf(processObject), 1);
+		var execAttributes = processObject.wait();
+		processObject.cleanUpGuest();
+		return execAttributes;
+	};
+
+	/**
+	 * Waits for all async scripts to finish, cleans up guest os and returns the results from the scripts.
+	 */
+	this.waitAll = function () {
+		logger.debug("Async processes length: " + asyncProcesses.length);
+		if (!asyncProcesses.length >= 1) {
+			return [];
+		}
+		logger.info("Waiting for all asynchronous scripts to finish...");
+		var execAttribsArr = [];
+		asyncProcesses.forEach(function (process) {
+			try {
+				var execAttr = process.wait();
+				execAttribsArr.push(execAttr);
+			} catch (e) {
+				logger.warn(e);
+			} finally {
+				process.cleanUpGuest();
+			}
+		});
+		asyncProcesses = [];
+		return execAttribsArr;
+	};
+
+	var runAsync = function (args, profileName, saveFunc) {
+		var profile = this.guest.getProfileByName(profileName);
+		var fileName = System.nextUUID() + "-command." + profile.scriptExtension;
+		var separator = profile.separator;
+		var guestTmpFolder = this.guest.options.tmpDirectory != null ? this.guest.options.tmpDirectory : profile.tmpFolder;
+		this.guest.createFolderInGuest(guestTmpFolder);
+		var destPath = guestTmpFolder + separator + fileName;
+		saveFunc(destPath);
+		return executeScriptAsync(destPath, fileName, args, profile);
+	}.bind(this);
+
+	var run = function (args, profileName, saveFunc) {
+		var process = runAsync(args, profileName, saveFunc);
+		asyncProcesses.splice(asyncProcesses.indexOf(process), 1);
+		var execAttributes = process.wait();
+		process.cleanUpGuest();
+		return execAttributes;
+	};
+
+	/**
+	 * Transfers a file from the local vRO file system at the specified location srcPath in the guest at the destPath location
+	 *
+	 * @param filePath vRO file location
+	 * @param destPath guest os file location
+	 * @param filePermissions file permissions for the uploaded file
+	 */
+	this.uploadFileToGuest = function (filePath, destPath, filePermissions) {
+		logger.info("Uploading file to guest form '" + filePath + "' to '" + destPath + "'");
+		this.guest.transferFileToGuest(filePath, destPath, filePermissions);
+	};
+
+	/**
+	 * Transfers a Resource Element specified by the resourceElementPath to the specified destPath guest OS file location.
+	 * The Resource Element content is first saved to local vRO file system and then it is transfered to the guest.
+	 *
+	 * @param resourceElementPath
+	 * @param destPath guest OS file location
+	 * @param filePermissions file permissions for the uploaded file
+	 */
+	this.uploadResourceElementToGuest = function (resourceElementPath, destPath, filePermissions) {
+		logger.info("Prepare upload of ResourceElement '" + resourceElementPath + "' to '" + destPath + "'");
+		var pathTokens = resourceElementPath.split("/");
+		var elementName = pathTokens.pop();
+		var categoryPath = pathTokens.join("/");
+		logger.debug("Obtain ResourceElement from '" + categoryPath + "' with name '" + elementName + "'");
+		var re = new ResourceElementAccessor(categoryPath, elementName);
+		System.getModule("com.vmware.pscoe.library.util").validateInput(re, "Missing script resource element at: " + resourceElementPath);
+		var fileName = System.nextUUID() + "-" + elementName;
+		var srcPath = this.guest.getSrcPath(fileName);
+		logger.debug("Source path '" + srcPath + "'");
+		re.writeContentToFile(srcPath);
+		this.uploadFileToGuest(srcPath, destPath, filePermissions);
+	};
+
+	/**
+	 * Creates a file at the specified destPath location with the specified content
+	 *
+	 * @param content file content
+	 * @param destPath guest OS file location
+	 */
+	this.uploadContentToGuest = function (content, destPath) {
+		logger.info("Prepare to upload content to guest '" + destPath + "'");
+		var fileName = System.nextUUID() + "-content";
+		var srcPath = this.guest.getSrcPath(fileName);
+		logger.debug("Source path '" + srcPath + "'");
+		System.getModule("com.vmware.pscoe.library.filesystem").writeFile(srcPath, content);
+		this.uploadFileToGuest(srcPath, destPath);
+	};
+
+	/**
+	 * Processes a template specified by the resourceElementPath and uploads the generated content to the specified destPath guest OS file location.
+	 * The processed template content is first saved to local vRO file system and then it is transfered to the guest.
+	 *
+	 * @param templatePath Path to template
+	 * @param templateContext key value pairs used for processing the template
+	 * @param destPath guest OS file location
+	 */
+	this.uploadTemplateToGuest = function (templatePath, templateContext, destPath) {
+		var pathTokens = templatePath.split("/");
+		var templateName = pathTokens.pop();
+		var resourcePath = pathTokens.join("/");
+		var template = ResourceElementAccessor.getByPath(resourcePath, templateName).getContent();
+		var content = System.getModule("com.vmware.pscoe.library.templates.engines").mark(template, templateContext);
+		this.uploadContentToGuest(content, destPath);
+	};
+
+	/**
+	 * Runs the specified cmd with args in the guest OS using the provided profileName.
+	 *
+	 * @param cmd
+	 * @param args
+	 * @param profileName
+	 */
+	this.runCommand = function (cmd, args, profileName) {
+		var self = this;
+		return run(args, profileName, function (destPath) {
+			self.uploadContentToGuest(cmd, destPath);
+		})
+	};
+
+	/**
+	 * Runs the specified cmd with args in the guest OS asynchronously, using the provided profileName asynchroniously.
+	 *
+	 * @param cmd
+	 * @param args
+	 * @param profileName
+	 */
+	this.runCommandAsync = function (cmd, args, profileName) {
+		var self = this;
+		return runAsync(args, profileName, function (destPath) {
+			self.uploadContentToGuest(cmd, destPath);
+		})
+	};
+
+	/**
+	 * Runs the specified resourceElement script with args in the guest OS using the provided profileName.
+	 *
+	 * @param script
+	 * @param args
+	 * @param profileName
+	 * @param filePermissions
+	 */
+	this.runScript = function (script, args, profileName, filePermissions) {
+		var self = this;
+		return run(args, profileName, function (destPath) {
+			self.uploadResourceElementToGuest(script, destPath, filePermissions)
+		})
+	};
+
+	/**
+	 * Runs the specified resourceElement script with args in the guest OS asynchronously, using the provided profileName.
+	 *
+	 * @param script
+	 * @param args
+	 * @param profileName
+	 * @param filePermissions
+	 */
+	this.runScriptAsync = function (script, args, profileName, filePermissions) {
+		var self = this;
+		return runAsync(args, profileName, function (destPath) {
+			self.uploadResourceElementToGuest(script, destPath, filePermissions)
+		})
+	};
+
+	/**
+	 * Runs already uploaded script with args in the guest OS using the provided profileName.
+	 *
+	 * @param scriptPath
+	 * @param args
+	 * @param profileName
+	 */
+	this.runUploadedScript = function (scriptPath, args, profileName) {
+		var profile = this.guest.getProfileByName(profileName);
+		var fileName = scriptPath.substr(scriptPath.lastIndexOf(profile.separator) + 1);
+		return executeScript(scriptPath, fileName, args, profile);
+	};
+
+	/**
+	 * Runs already uploaded script with args in the guest OS asynchronously using the provided profileName.
+	 *
+	 * @param scriptPath
+	 * @param args
+	 * @param profileName
+	 */
+	this.runUploadedScriptAsync = function (scriptPath, args, profileName) {
+		var profile = this.guest.getProfileByName(profileName);
+		var fileName = scriptPath.substr(scriptPath.lastIndexOf(profile.separator) + 1);
+		logger.info("Running script with name " + fileName + " asynchronously...");
+		return executeScriptAsync(scriptPath, fileName, args, profile);
+	};
+});
+]]></script>
+</dunes-script-module>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="67c61443-0da2-4264-9c4e-161909978c8d" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Install Application</display-name>
+    <position y="60.0" x="80.0"/>
+    <input>
+        <param name="inputProperties" type="Properties"/>
+        <param name="vm" type="VC:VirtualMachine"/>
+        <param name="username" type="string"/>
+        <param name="scriptType" type="string"/>
+        <param name="script" type="string"/>
+        <param name="scriptTimeout" type="number"/>
+        <param name="scriptRefreshTime" type="number"/>
+        <param name="scriptWorkingDirectory" type="string"/>
+        <param name="interactiveSession" type="boolean"/>
+    </input>
+    <output>
+        <param name="scriptOutputText" type="string"/>
+        <param name="scriptExitCode" type="number"/>
+    </output>
+    <attrib name="_password" type="SecureString">
+        <value encoded="n">8BX56I4DW77H61V72T65X31N21IE8DB5CEMC6AFEC0T6ADE577M5FCEDA7L8B0AC67MDA3A14WDF0B50CHB02B04BI380C830SE0BB813Y56116D2J975E744VDA9E4FAY3F186FBIEB221D3MEBC11AEU8ACFD54S432D468P8F24F9AY3274164HB26AA58WD142654JF05307FJ5EBDC86U</value>
+    </attrib>
+    <attrib name="_rootUser" type="string">
+        <value encoded="n">root</value>
+    </attrib>
+    <attrib name="_install_script" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="_vm_object" type="VC:VirtualMachine">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="_script_type" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="_scriptTimeout" type="number">
+        <value encoded="n">120.0</value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <position y="60.0" x="640.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item2" type="task" comparator="0">
+        <display-name>Get data from vRA Event</display-name>
+        <script encoded="false">//Confirm all the inputs are properly in&#13;
+System.log(inputProperties.customProperties.application);&#13;
+System.log(inputProperties.customProperties.param);&#13;
+System.log(inputProperties.resourceNames[0]);&#13;
+System.log(inputProperties.customProperties.osType);&#13;
+System.log(inputProperties.customProperties.newUser);&#13;
+&#13;
+//Set all the variables here.&#13;
+var vm_name = inputProperties.resourceNames[0];&#13;
+var newUser = inputProperties.customProperties.newUser;&#13;
+var osType = inputProperties.customProperties.osType;&#13;
+var application = inputProperties.customProperties.application&#13;
+var param = inputProperties.customProperties.param;&#13;
+&#13;
+//Get application list(string) and split them into an array&#13;
+var application_list = application.split(",");&#13;
+for each (var a in application_list){&#13;
+    System.log("Application list: " + a);&#13;
+}&#13;
+&#13;
+//Get param list(string) and split them into a key, value object&#13;
+var params_props = new Properties;&#13;
+var param_list = param.split(",");&#13;
+for each (var p in param_list){&#13;
+    System.log(p);&#13;
+    System.log(typeof p);&#13;
+    var temp_array = p.split("=");&#13;
+    params_props.put(temp_array[0], temp_array[1]);&#13;
+    System.log("Param Key: " + temp_array[0] + "Param Value" + params_props.get(temp_array[0]));&#13;
+}&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+//If it is linux os(rhel), apply the following scripts with the corresponding appplications and parameters.&#13;
+if(osType == "LINUX"){&#13;
+    _script_type = "bash";&#13;
+    _vm_object = VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ inputProperties.resourceNames[0]+ "\'")[0];&#13;
+&#13;
+    for each (var param in param_list){&#13;
+        _install_script += "export " + param;&#13;
+    }&#13;
+&#13;
+    for each (var app in application_list){&#13;
+        System.log(app);&#13;
+        if(app == "httpd-apache"){&#13;
+             _install_script += "yum -y install httpd\n";&#13;
+             _install_script += "systemctl status httpd\n";&#13;
+        }&#13;
+        if(app == "java"){&#13;
+            _install_script += "yum -y install java \n";&#13;
+        }&#13;
+&#13;
+        if(app == "git"){&#13;
+            _install_script += "yum -y install git \n";&#13;
+            _install_script += "git --version \n";&#13;
+            _install_script += "mkdir -p $createDir \n"&#13;
+        }&#13;
+        if(newUser){&#13;
+            _install_script += "useradd " + newUser + "\n"&#13;
+        }&#13;
+        System.log(_install_script);&#13;
+    }&#13;
+}&#13;
+&#13;
+&#13;
+//If it is windows os(rhel), apply the following scripts with the corresponding appplications and parameters.&#13;
+if(osType == "WINDOWS"){&#13;
+    _rootUser = "Administrator"&#13;
+    _password = "VMware1!"&#13;
+    _script_type = "powershell";&#13;
+    _vm_object = VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ inputProperties.resourceNames[0]+ "\'")[0];&#13;
+    for each (var app in application_list){&#13;
+        if(app == "sample"){&#13;
+             _install_script += "Out-File C:\test-01 \n";&#13;
+             _install_script += "New-LocalUser -Name " + newUser + " -Description \"Description of this account.\" -NoPassword"&#13;
+        }&#13;
+        System.log(_install_script);&#13;
+    }&#13;
+}</script>
+        <in-binding>
+            <bind name="_password" type="SecureString" export-name="_password"/>
+            <bind name="_vm_object" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="_script_type" type="string" export-name="_script_type"/>
+            <bind name="_install_script" type="string" export-name="_install_script"/>
+            <bind name="inputProperties" type="Properties" export-name="inputProperties"/>
+            <bind name="_rootUser" type="string" export-name="_rootUser"/>
+        </in-binding>
+        <out-binding>
+            <bind name="_password" type="SecureString" export-name="_password"/>
+            <bind name="_install_script" type="string" export-name="_install_script"/>
+            <bind name="_vm_object" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="_rootUser" type="string" export-name="_rootUser"/>
+            <bind name="_script_type" type="string" export-name="_script_type"/>
+            <bind name="_scriptTimeout" type="number" export-name="_scriptTimeout"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="95.0" x="223.0"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item0" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Workflow element</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_rootUser"/>
+            <bind name="password" type="SecureString" export-name="_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_scriptTimeout"/>
+            <bind name="scriptRefreshTime" type="number" export-name="scriptRefreshTime"/>
+            <bind name="scriptWorkingDirectory" type="string" export-name="scriptWorkingDirectory"/>
+            <bind name="interactiveSession" type="boolean" export-name="interactiveSession"/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name="scriptOutputText"/>
+            <bind name="scriptExitCode" type="number" export-name="scriptExitCode"/>
+        </out-binding>
+        <description> </description>
+        <position y="70.0" x="380.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

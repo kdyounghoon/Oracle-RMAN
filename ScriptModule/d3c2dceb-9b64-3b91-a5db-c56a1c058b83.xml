@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getAllDatacenters" result-type="Array/string" api-version="6.0.0" id="d3c2dceb-9b64-3b91-a5db-c56a1c058b83" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.common">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var configAccessor = new RMANConfigAccessor();
+var datacenters = [];
+datacenters = configAccessor.vCenterHost.getAllDatacenters(null, null);
+return datacenters.map(function (dc) {
+    return dc.name;
+});
+]]></script>
+</dunes-script-module>

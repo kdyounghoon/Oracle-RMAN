@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="AsyncActionExecutor" result-type="Any" api-version="6.0.0" id="bee89aac-d822-34d1-84b3-cbde83c12073" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Future = VROES.import("Future").from("com.vmware.pscoe.library.ts.util.Future");
+var AsyncWorkflowExecutor = VROES.import("AsyncWorkflowExecutor").from("com.vmware.pscoe.library.ts.util.AsyncWorkflowExecutor");
+var AsyncActionExecutor = /** @class */ (function () {
+    function AsyncActionExecutor() {
+        throw new Error("Private constructor");
+    }
+    AsyncActionExecutor.execute = function (action) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        return new ActionFuture(action, args);
+    };
+    return AsyncActionExecutor;
+}());
+var ActionFuture = /** @class */ (function (_super) {
+    __extends(ActionFuture, _super);
+    function ActionFuture(action, args) {
+        var _this = _super.call(this) || this;
+        var properties = new Properties();
+        properties.put("action", action);
+        properties.put("args", args);
+        _this.future = AsyncWorkflowExecutor.executeByFqn("PSCoE/Util/Async Action Executor", properties);
+        return _this;
+    }
+    ActionFuture.prototype.toString = function () {
+        return this.future.toString();
+    };
+    ActionFuture.prototype.checkCompleted = function () {
+        if (this.future.isDone()) {
+            this.value = this.future.get()["result"];
+            return true;
+        }
+        return false;
+    };
+    return ActionFuture;
+}(Future));
+return VROES.export().named("AsyncActionExecutor", AsyncActionExecutor).build();
+]]></script>
+</dunes-script-module>

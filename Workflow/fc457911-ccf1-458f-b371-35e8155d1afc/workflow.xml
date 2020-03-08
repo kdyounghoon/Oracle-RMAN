@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="fc457911-ccf1-458f-b371-35e8155d1afc" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Hands-on file move</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="vm" type="VC:VirtualMachine"/>
+    </input>
+    <output>
+        <param name="result" type="boolean"/>
+    </output>
+    <attrib name="vmPassword" type="SecureString" conf-id="826eaab1-b9b4-4dda-8831-eecda3177a56" conf-key="Password"/>
+    <attrib name="vmUsername" type="string" conf-id="826eaab1-b9b4-4dda-8831-eecda3177a56" conf-key="temp_User"/>
+    <attrib name="vcoPath" type="string">
+        <value encoded="n">test/test.ps2</value>
+    </attrib>
+    <attrib name="guestFilePath" type="string">
+        <value encoded="n">/tmp</value>
+    </attrib>
+    <attrib name="overwrite" type="boolean">
+        <value encoded="n">true</value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <position y="40.0" x="360.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="link" linked-workflow-id="C78080808080808080808080808080809480808001322751030482b80adf61e7c" comparator="0">
+        <display-name>워크플로 요소</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vmUsername" type="string" export-name="vmUsername"/>
+            <bind name="vmPassword" type="SecureString" export-name="vmPassword"/>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+            <bind name="vcoPath" type="string" export-name="vcoPath"/>
+            <bind name="guestFilePath" type="string" export-name="guestFilePath"/>
+            <bind name="overwrite" type="boolean" export-name="overwrite"/>
+        </in-binding>
+        <out-binding>
+            <bind name="result" type="boolean" export-name="result"/>
+        </out-binding>
+        <description> </description>
+        <position y="50.0" x="170.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

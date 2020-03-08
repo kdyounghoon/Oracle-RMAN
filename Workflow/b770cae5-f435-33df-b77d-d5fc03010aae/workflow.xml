@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="b770cae5-f435-33df-b77d-d5fc03010aae" version="1.0.1" api-version="6.0.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Install Solution]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="sshHostname" type="string"/>
+    <param name="sshUsername" type="string"/>
+    <param name="sshPassword" type="SecureString"/>
+    <param name="guestOSusername" type="string"/>
+    <param name="guestOSpassword" type="SecureString"/>
+    <param name="guestOStempDir" type="string"/>
+    <param name="vCenterHost" type="VC:SdkConnection"/>
+    <param name="nfsClientFolder" type="string"/>
+    <param name="nfsServerShare" type="string"/>
+    <param name="nfsServer" type="string"/>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="400.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[InstallSolution]]></display-name>
+    <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Out = VROES.import("Out").from("vrotsc-annotations");
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var config = new RMANConfigAccessor();
+var inputParams = workflow.getInputParameters();
+for (var param in inputParams) {
+    config.set(param, inputParams[param]);
+    System.log("Setting " + param + " to " + inputParams[param]);
+}
+]]></script>
+    <in-binding>
+      <bind name="sshHostname" type="string" export-name="sshHostname"/>
+      <bind name="sshUsername" type="string" export-name="sshUsername"/>
+      <bind name="sshPassword" type="SecureString" export-name="sshPassword"/>
+      <bind name="nfsClientFolder" type="string" export-name="nfsClientFolder"/>
+      <bind name="nfsServerShare" type="string" export-name="nfsServerShare"/>
+      <bind name="nfsServer" type="string" export-name="nfsServer"/>
+      <bind name="vCenterHost" type="VC:SdkConnection" export-name="vCenterHost"/>
+      <bind name="guestOSusername" type="string" export-name="guestOSusername"/>
+      <bind name="guestOSpassword" type="SecureString" export-name="guestOSpassword"/>
+      <bind name="guestOStempDir" type="string" export-name="guestOStempDir"/>
+    </in-binding>
+    <out-binding/>
+    <position y="50.0" x="250.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="sshHostname">
+      <desc><![CDATA[sshHostname]]></desc>
+    </p-param>
+    <p-param name="sshUsername">
+      <desc><![CDATA[sshUsername]]></desc>
+    </p-param>
+    <p-param name="sshPassword">
+      <desc><![CDATA[sshPassword]]></desc>
+    </p-param>
+    <p-param name="guestOSusername">
+      <desc><![CDATA[guestOSusername]]></desc>
+    </p-param>
+    <p-param name="guestOSpassword">
+      <desc><![CDATA[guestOSpassword]]></desc>
+    </p-param>
+    <p-param name="guestOStempDir">
+      <desc><![CDATA[guestOStempDir]]></desc>
+    </p-param>
+    <p-param name="vCenterHost">
+      <desc><![CDATA[vCenterHost]]></desc>
+    </p-param>
+    <p-param name="nfsClientFolder">
+      <desc><![CDATA[nfsClientFolder]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="nfsServerShare">
+      <desc><![CDATA[nfsServerShare]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="nfsServer">
+      <desc><![CDATA[nfsServer]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="826eaab1-b9b4-4dda-8831-eecda3177a56" version="0.0.0">
+  <display-name><![CDATA[template_initial]]></display-name>
+  <atts>
+    <att name="temp_User" type="string" read-only="false">
+      <value encoded="n"><![CDATA[root]]></value>
+    </att>
+    <att name="Password" type="SecureString" read-only="false">
+      <value encoded="n"><![CDATA[vcoencrypted:{riv}XFqiAx2eqc5aWCUQ4ylOMCMJDxh4S/LW7528TQ8gExM=]]></value>
+    </att>
+  </atts>
+</config-element>

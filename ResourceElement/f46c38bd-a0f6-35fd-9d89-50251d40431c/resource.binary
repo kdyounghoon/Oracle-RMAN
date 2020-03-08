@@ -1,0 +1,108 @@
+
+log() {
+    local text=$@
+    local COLOR='\033[0;33m'
+    local NO_COLOR='\033[0m'
+
+    echo -e "${COLOR}[$(date)]: ${COLOR}$text${NO_COLOR}"
+}
+
+exit_on_error() {
+    exit_code=$1
+    last_command=${@:2}
+    if [ $exit_code -ne 0 ]; then
+        >&2 echo "\"${last_command}\" command failed with exit code ${exit_code}."
+       exit $exit_code
+   fi
+}
+
+
+BACKUP_FILE_PATH=$1
+DATE_TIME=$2
+CONTROLFILE_RECOVERY_PATH=/dbawork/rman/control-file-recovery-made.cmd
+DB_MOUNT_PATH=/dbawork/rman/db-mount-made.cmd
+REGISTER_RESTORE_PATH=/dbawork/rman/register-restore-made.cmd
+DBAWORK_BACKUP_PATH=/dbawork/BACKUP/
+ARCHIVE_FILE_PATH=/oraarch/M14TDB1
+
+#These are the arguments
+echo "Total arguments : $#"
+echo "1st Argument = $1"
+echo "2nd argument = $2"
+
+
+#Create CONTROLFILE_RECOVERY_CMD
+cat << EOF > $CONTROLFILE_RECOVERY_PATH
+run {
+  SHUTDOWN ABORT
+  STARTUP NOMOUNT
+  RESTORE CONTROLFILE FROM '$BACKUP_FILE_PATH';
+}
+EOF
+exit_on_error $? !!
+
+
+#Run CONTROLFILE_RECOVERY_CMD
+su - oracle -c "export NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'"
+exit_on_error $? !!
+su - oracle -c "rman target / @$CONTROLFILE_RECOVERY_PATH"
+exit_on_error $? !!
+
+log "Finished contro-file-recovery"
+
+
+#Create $DB_MOUNT_PATH_CMD
+cat << EOF > $DB_MOUNT_PATH
+run {
+  sql "ALTER DATABASE MOUNT";
+}
+EOF
+exit_on_error $? !!
+
+#Run $DB_MOUNT_PATH_CMD
+su - oracle -c "rman target / @$DB_MOUNT_PATH"
+exit_on_error $? !!
+
+log "DB Mount finished"
+
+
+#Create $REGISTER_RESTORE_PATH_CMD
+cat << EOF > $REGISTER_RESTORE_PATH
+run {
+CROSSCHECK BACKUPSET;
+CROSSCHECK COPY OF DATABASE;
+DELETE EXPIRED BACKUPSET;
+DELETE EXPIRED COPY OF DATABASE;
+
+CATALOG START WITH '$DBAWORK_BACKUP_PATH';
+
+
+ALLOCATE CHANNEL C1 TYPE DISK;
+ALLOCATE CHANNEL C2 TYPE DISK;
+ALLOCATE CHANNEL C3 TYPE DISK;
+ALLOCATE CHANNEL C4 TYPE DISK;
+RESTORE DATABASE;
+RELEASE CHANNEL C1;
+RELEASE CHANNEL C2;
+RELEASE CHANNEL C3;
+RELEASE CHANNEL C4;
+
+CATALOG START WITH '$ARCHIVE_FILE_PATH';
+
+SET UNTIL TIME "to_date('$DATE_TIME','YYYY/MM/DD HH24:MI:SS')";
+RECOVER DATABASE;
+sql "alter database open resetlogs";
+}
+EOF
+exit_on_error $? !!
+
+#Run $REGISTER_RESTORE_PATH_CMD
+su - oracle -c "export NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'"
+exit_on_error $? !!
+su - oracle -c "rman target / @$REGISTER_RESTORE_PATH"
+exit_on_error $? !!
+
+
+log "Finished register-backup-copy"
+
+return "Recovery finished successfully"

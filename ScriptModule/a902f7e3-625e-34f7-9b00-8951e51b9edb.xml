@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="GuestOperations" result-type="Any" api-version="6.0.0" id="a902f7e3-625e-34f7-9b00-8951e51b9edb" version="1.2.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.guestops">
+  <param n="vcGuest" t="Any"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+var GuestOpsManager = Class.load("com.vmware.pscoe.library.guestops", "GuestOpsManager");
+
+return new GuestOpsManager(vcGuest);
+]]></script>
+</dunes-script-module>

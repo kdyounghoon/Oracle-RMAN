@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createVirtualDiskFlatVer2ConfigSpec_all" result-type="Any" api-version="6.0.0" id="3797069f-3d22-43a8-905c-e9acae7c5242" version="0.0.0" category-name="com.vmware.pso.util">
+  <param n="datastore" t="VC:Datastore"><![CDATA[]]></param>
+  <param n="sizeInGB" t="number"><![CDATA[]]></param>
+  <param n="controllerKey" t="number"><![CDATA[]]></param>
+  <param n="diskIndex" t="number"><![CDATA[]]></param>
+  <param n="thinProvisioned" t="boolean"><![CDATA[]]></param>
+  <param n="diskMode" t="VC:VirtualDiskMode"><![CDATA[]]></param>
+  <param n="diskSharing" t="string"><![CDATA[]]></param>
+  <param n="eagerlyScrub" t="boolean"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[// Create Disk BackingInfo
+var diskBackingInfo = new VcVirtualDiskFlatVer2BackingInfo();
+diskBackingInfo.sharing = diskSharing;
+//"test2"
+diskBackingInfo.diskMode = diskMode.value;
+var datastorePath = "[" + datastore.info.name + "]";
+diskBackingInfo.fileName = datastorePath;
+diskBackingInfo.thinProvisioned = thinProvisioned;
+diskBackingInfo.eagerlyScrub = eagerlyScrub;
+//System.log('diskBackingInfo='+ diskBackingInfo);
+// Create VirtualDisk
+var disk = new VcVirtualDisk();
+disk.backing = diskBackingInfo;
+disk.controllerKey = controllerKey; //Scsi (1)
+disk.key = -2;  //??
+// Index 0 is not valid since Vi 4.0 (probably a bug)
+disk.unitNumber = diskIndex;  // ex Scsi 1:(diskndex)
+disk.capacityInKB = parseInt( "" + (sizeInGB*1024*1024) );
+// Create Disk ConfigSpec
+deviceConfigSpec = new VcVirtualDeviceConfigSpec();
+deviceConfigSpec.device = disk;
+deviceConfigSpec.fileOperation = VcVirtualDeviceConfigSpecFileOperation.create;
+deviceConfigSpec.operation = VcVirtualDeviceConfigSpecOperation.add;
+
+return deviceConfigSpec;]]></script>
+</dunes-script-module>

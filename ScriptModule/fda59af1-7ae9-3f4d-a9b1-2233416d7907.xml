@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="JsonUtil" result-type="Any" api-version="6.0.0" id="fda59af1-7ae9-3f4d-a9b1-2233416d7907" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var JsonUtil = /** @class */ (function () {
+    function JsonUtil() {
+        throw new Error("Private constructor");
+    }
+    JsonUtil.parse = function (content, revivers) {
+        var reviver;
+        if (revivers && revivers.length) {
+            reviver = function (key, value) {
+                revivers.forEach(function (r) {
+                    value = r(key, value);
+                });
+                return value;
+            };
+        }
+        return reviver ? JSON.parse(content, reviver) : JSON.parse(content);
+    };
+    JsonUtil.stringify = function (object, replacers) {
+        var replacer;
+        if (replacers && replacers.length) {
+            replacer = function (key, value) {
+                replacers.forEach(function (r) {
+                    value = r(key, value);
+                });
+                return value;
+            };
+        }
+        return replacer ? JSON.stringify(object, replacer) : JSON.stringify(object);
+    };
+    JsonUtil.clone = function (object) {
+        var _this = this;
+        if (object != null && typeof object == "object") {
+            if (object instanceof Date) {
+                return object;
+            }
+            else if (Array.isArray(object)) {
+                return object.map(function (item) { return _this.clone(item); });
+            }
+            else {
+                var clone = {};
+                for (var key in object) {
+                    clone[key] = this.clone(object[key]);
+                }
+                return clone;
+            }
+        }
+        else {
+            return object;
+        }
+    };
+    return JsonUtil;
+}());
+return VROES.export().named("JsonUtil", JsonUtil).build();
+]]></script>
+</dunes-script-module>

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getVMsInDatacenter" result-type="Array/string" api-version="6.0.0" id="56b90806-cdc5-324b-9503-62f7af7bfe1b" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.common">
+  <param n="dcName" t="string"><![CDATA[]]></param>
+  <param n="filterStr" t="string"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var filteredVMsByName = [];
+var dcTypeStr = "Datacenter";
+if (!dcName || !filterStr || (filterStr && filterStr.length < 3)) {
+    return [];
+}
+filteredVMsByName = VcPlugin.getAllVirtualMachines(null, "xpath:name[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'),'"
+    + filterStr.toLowerCase() + "')]");
+return filteredVMsByName
+    .filter(function (vm) { return Utils.checkParentFolder(vm.parent, dcName, dcTypeStr); })
+    .map(function (vm) { return vm.name; });
+]]></script>
+</dunes-script-module>

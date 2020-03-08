@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="2662f49b-8171-4fe2-b370-aaef24a2357d" version="0.0.0" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Guest OS SCript Trigger]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="payload" type="Properties"/>
+  </input>
+  <attrib name="scriptType" type="string" read-only="false">
+    <value encoded="n"><![CDATA[bash]]></value>
+  </attrib>
+  <attrib name="script" type="string" read-only="false">
+    <value encoded="n"><![CDATA[mkdir pso]]></value>
+  </attrib>
+  <attrib name="vm" type="VC:VirtualMachine" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="username" type="string" read-only="false">
+    <value encoded="n"><![CDATA[root]]></value>
+  </attrib>
+  <attrib name="password" type="SecureString" read-only="false">
+    <value encoded="n"><![CDATA[8BQ56R4DK77G61X72J65Z31S21W2323849K358A16JCACB93DX688E326XE18FB7FGEFFF6ECO1780F21UE01764AM1F8A173YEBDA9A2R39EDE5DGE4F07A3G1BE8D7EMFEB9E15M90ED466IB0DF7D0J6A45B26JB739F31NB25246FT54A1035N8E53E88SAD4E199J4608656T475201FO]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="420.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item2" type="task">
+    <display-name><![CDATA[Scriptable task]]></display-name>
+    <script encoded="false"><![CDATA[var vmName = payload.machine.name;
+vm = VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ vmName + "\'")[0];]]></script>
+    <in-binding>
+      <bind name="payload" type="Properties" export-name="payload"/>
+    </in-binding>
+    <out-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+    </out-binding>
+    <description><![CDATA[Simple task with custom script capability.]]></description>
+    <position y="60.0" x="170.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779">
+    <display-name><![CDATA[Workflow element]]></display-name>
+    <in-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+      <bind name="username" type="string" export-name="username"/>
+      <bind name="password" type="SecureString" export-name="password"/>
+      <bind name="scriptType" type="string" export-name="scriptType"/>
+      <bind name="script" type="string" export-name="script"/>
+      <bind name="scriptTimeout" type="number" export-name=""/>
+      <bind name="scriptRefreshTime" type="number" export-name=""/>
+      <bind name="scriptWorkingDirectory" type="string" export-name=""/>
+      <bind name="interactiveSession" type="boolean" export-name=""/>
+    </in-binding>
+    <out-binding>
+      <bind name="scriptOutputText" type="string" export-name=""/>
+      <bind name="scriptExitCode" type="number" export-name=""/>
+    </out-binding>
+    <description><![CDATA[ ]]></description>
+    <position y="60.0" x="280.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

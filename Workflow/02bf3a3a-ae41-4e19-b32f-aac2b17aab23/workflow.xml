@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="02bf3a3a-ae41-4e19-b32f-aac2b17aab23" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Find VMs that matches a string value</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="vmName" type="string"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <position y="50.0" x="300.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false">// Get all Virtual Machines for all vCenter connections defined for this plugin&#13;
+var allVms = VcPlugin.getAllVirtualMachines();&#13;
+var vms = new Array();&#13;
+var host = null;&#13;
+// Check if the VM match the regexp&#13;
+for (var i in allVms) {&#13;
+  if (allVms[i].name.match(new RegExp(vmName, "i"))) {&#13;
+    System.log(allVms[i]);&#13;
+    System.getModule("com.vmware.library.vc.vm.power").startVM(allVms[i],host) ;&#13;
+    vms.push(allVms[i]);&#13;
+  }&#13;
+}&#13;
+VMList = vms;</script>
+        <in-binding>
+            <bind name="vmName" type="string" export-name="vmName"/>
+        </in-binding>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="78.5" x="220.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

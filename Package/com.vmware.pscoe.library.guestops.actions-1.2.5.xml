@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='4e7a270c-ef3b-313e-be0d-c9368c60841f'&dunesName='Action'&name='GuestBase'&category='com.vmware.pscoe.library.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='34101466-6e78-37cd-970d-725da1f622ca'&dunesName='Action'&name='GuestOpsManager'&category='com.vmware.pscoe.library.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='3c054a4c-d6bb-3316-a917-215346cfd857'&dunesName='Action'&name='Guest'&category='com.vmware.pscoe.library.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='e4928754-e3db-3c40-a3f0-b1288ac05430'&dunesName='Action'&name='GuestManager'&category='com.vmware.pscoe.library.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='a902f7e3-625e-34f7-9b00-8951e51b9edb'&dunesName='Action'&name='GuestOperations'&category='com.vmware.pscoe.library.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='7551c6c6-abfb-335f-915c-547fc0561485'&dunesName='Action'&name='AsyncProcess'&category='com.vmware.pscoe.library.guestops']]></elm>
+</package>

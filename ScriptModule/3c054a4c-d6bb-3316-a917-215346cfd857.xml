@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Guest" result-type="Any" api-version="6.0.0" id="3c054a4c-d6bb-3316-a917-215346cfd857" version="1.2.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.guestops">
+  <param n="vcVm" t="VC:VirtualMachine"><![CDATA[]]></param>
+  <param n="vmUsername" t="string"><![CDATA[]]></param>
+  <param n="vmPassword" t="SecureString"><![CDATA[]]></param>
+  <param n="options" t="Any"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var Class = System.getModule("com.vmware.pscoe.library.class").Class();
+var Guest = Class.load("com.vmware.pscoe.library.guestops", "GuestManager");
+
+return new Guest(vcVm, vmUsername, vmPassword, options);
+]]></script>
+</dunes-script-module>

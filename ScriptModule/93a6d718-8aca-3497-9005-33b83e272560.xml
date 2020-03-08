@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="addValueToObject" result-type="Any" api-version="6.0.0" id="93a6d718-8aca-3497-9005-33b83e272560" version="2.18.5" allowed-operations="vef" category-name="com.vmware.pscoe.library.util">
+  <param n="obj" t="Any"><![CDATA[]]></param>
+  <param n="keys" t="Any"><![CDATA[]]></param>
+  <param n="value" t="Any"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var ObjectWrapper = System.getModule("com.vmware.pscoe.library.util").ObjectWrapper();
+return new ObjectWrapper(obj).addValueWithPath(keys, value).obj;
+]]></script>
+</dunes-script-module>

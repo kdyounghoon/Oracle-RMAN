@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getRMANBackupFileNames" result-type="Array/string" api-version="6.0.0" id="1bbfa3cb-604b-37ae-bb61-1909417d94b0" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.common">
+  <param n="pattern" t="string"><![CDATA[]]></param>
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var NFSService = VROES.import("NFSService").from("com.vmware.pscoe.skhynix.rman.NFS.NFSService");
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var machineList = new NFSService().getFileList();
+if (pattern) {
+    machineList = Utils.filterFileList(machineList, pattern);
+}
+return machineList;
+]]></script>
+</dunes-script-module>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="d4eff645-6668-40db-b113-e373ce02d0ff" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Hands-on Make-VM</display-name>
+    <position y="10.0" x="50.0"/>
+    <input>
+        <param name="name" type="string"/>
+    </input>
+    <output>
+        <param name="newVM" type="VC:VirtualMachine"/>
+    </output>
+    <attrib name="folder" type="VC:VmFolder">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:group-v2741'&amp;dunesName='VC:VmFolder'</value>
+    </attrib>
+    <attrib name="powerOn" type="boolean">
+        <value encoded="n">true</value>
+    </attrib>
+    <attrib name="template" type="boolean">
+        <value encoded="n">false</value>
+    </attrib>
+    <attrib name="datastore" type="VC:Datastore">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:datastore-11'&amp;dunesName='VC:Datastore'</value>
+    </attrib>
+    <attrib name="host" type="VC:HostSystem">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:host-9'&amp;dunesName='VC:HostSystem'</value>
+    </attrib>
+    <attrib name="network" type="VC:Network">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:network-1424'&amp;dunesName='VC:Network'</value>
+    </attrib>
+    <attrib name="dnsDomain" type="string">
+        <value encoded="n">vmware.com</value>
+    </attrib>
+    <attrib name="dhcp" type="boolean">
+        <value encoded="n">false</value>
+    </attrib>
+    <attrib name="gateway" type="Array/string">
+        <value encoded="n">#{#string#10.10.0.1#}#</value>
+    </attrib>
+    <attrib name="ipAddress" type="string">
+        <value encoded="n">10.10.0.123</value>
+    </attrib>
+    <attrib name="subnetMask" type="string">
+        <value encoded="n">255.255.255.0</value>
+    </attrib>
+    <attrib name="pool" type="VC:ResourcePool">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:resgroup-22'&amp;dunesName='VC:ResourcePool'</value>
+    </attrib>
+    <attrib name="vm" type="VC:VirtualMachine">
+        <value encoded="n">dunes://service.dunes.ch/CustomSDKObject?id='vcsa01.psolab.local%2Cid:vm-848'&amp;dunesName='VC:VirtualMachine'</value>
+    </attrib>
+    <attrib name="doSysprep" type="boolean">
+        <value encoded="n">false</value>
+    </attrib>
+    <attrib name="OS_user" type="string" conf-id="826eaab1-b9b4-4dda-8831-eecda3177a56" conf-key="temp_User"/>
+    <attrib name="OS_passwd" type="SecureString" conf-id="826eaab1-b9b4-4dda-8831-eecda3177a56" conf-key="Password"/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <position y="10.0" x="310.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="link" linked-workflow-id="BD808080808080808080808080808080D7C280800122528313869552e41805bb1" comparator="0">
+        <display-name>clone, Linux with single NIC</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="folder" type="VC:VmFolder" export-name="folder"/>
+            <bind name="name" type="string" export-name="name"/>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+            <bind name="powerOn" type="boolean" export-name="powerOn"/>
+            <bind name="template" type="boolean" export-name="template"/>
+            <bind name="datastore" type="VC:Datastore" export-name="datastore"/>
+            <bind name="host" type="VC:HostSystem" export-name="host"/>
+            <bind name="pool" type="VC:ResourcePool" export-name="pool"/>
+            <bind name="doSysprep" type="boolean" export-name="doSysprep"/>
+            <bind name="clientName" type="string" export-name="name"/>
+            <bind name="network" type="VC:Network" export-name="network"/>
+            <bind name="dnsServerList" type="Array/string"/>
+            <bind name="dnsDomain" type="string" export-name="dnsDomain"/>
+            <bind name="dhcp" type="boolean" export-name="dhcp"/>
+            <bind name="gateway" type="Array/string" export-name="gateway"/>
+            <bind name="ipAddress" type="string" export-name="ipAddress"/>
+            <bind name="macAddress" type="string"/>
+            <bind name="subnetMask" type="string" export-name="subnetMask"/>
+        </in-binding>
+        <out-binding>
+            <bind name="newVM" type="VC:VirtualMachine" export-name="newVM"/>
+        </out-binding>
+        <description> </description>
+        <position y="20.0" x="140.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

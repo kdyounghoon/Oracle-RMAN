@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item2" object-name="workflow:name=generic" id="b9c757f9-a939-4d47-a103-4130aa14cb91" editor-version="1.6" version="0.0.0" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+    <display-name>GPDB Machine Request Completed</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="payload" type="Properties"/>
+    </input>
+    <output/>
+    <attrib name="runScriptWorkflow" type="Workflow">
+        <value encoded="n">dunes://service.dunes.ch/Workflow?id='f8cd5692-92a0-46b6-a98d-53ffd878d779'&amp;dunesName='Workflow'</value>
+    </attrib>
+    <attrib name="guestPassword" type="SecureString">
+        <value encoded="n">8BW56V4DN77Y61U72U65Q31Z21JC9C6B4DZC5F82D6LA49E9E0H7B288D6T99D59F8T84FFDB8PBC02196O947DB35UA3BBCC5Z76906AFJ4F26DF3V13D17E4ZDFEB38BU7DFB084Z8CA1315HC5F0EEAY73C8E1FX55BEA3CL73F1921V6494A2EZ830B0A8GCDDF0A5IFE32D0BUC240F84W</value>
+    </attrib>
+    <attrib name="guestUsername" type="string">
+        <value encoded="n">root</value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <position y="45.40909090909091" x="564.5"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false">//locate the configuration element
+var gpdbClusters;
+var cat = Server.getConfigurationElementCategoryWithPath("Samsung Bigdata");
+if (cat){
+	for each (e in cat.configurationElements){
+		if (e.name == "GPDB Clusters"){
+			gpdbClusters = e;
+			break;
+		}
+	}
+}
+if (!gpdbClusters){
+	throw "Configuration element at path 'Samsung Bigdata/GPDB Clusters' cannot be found."
+}
+//store the cluster infomation in json
+var cluster;
+cluster = JSON.parse(gpdbClusters.getAttributeWithKey(payload.machine.properties.get("__Cafe.Root.Request.Id")).value);
+
+//create a new member json with machine's infomation
+var member = {};
+member.hostname = payload.machine.name;
+member.ipAddress = payload.machine.properties.get("VirtualMachine.Network0.Address");
+member.id = payload.machine.properties.get("VirtualMachine.Admin.UUID");
+member.role = payload.componentId;
+
+//add member json to members array of the cluster json
+cluster.members.push(member);
+
+//adding IP and roles to cluster-level infomation
+if (member.role == "sdw"){
+	if (!cluster.sdwIds){
+		cluster.sdwIds = member.id;
+	} else {
+		cluster.sdwIds += "," + member.id;
+	}
+	
+	if (!cluster.sdwIPs){
+		cluster.sdwIPs = member.ipAddress;
+	} else {
+		cluster.sdwIPs += "," + member.ipAddress;
+	}
+} else if (member.role == "smdw"){
+	cluster.smdwId = member.id;
+	cluster.smdwIP = member.ipAddress;
+} else if (member.role == "mdw"){
+	cluster.mdwId = member.id;
+	cluster.mdwIP = member.ipAddress;
+}
+
+//update the cluster entry in the configuration element
+gpdbClusters.setAttributeWithKey(payload.machine.properties.get("__Cafe.Root.Request.Id"), JSON.stringify(cluster), "String");
+
+//following code will only run for mdw. note that mdw is the last elemet to be provisioned, meaning all other machine nodes are already created at this moment.
+if (member.role == "mdw"){
+	//extract machine IPs
+	var MDW_IP;
+	var SMDW_IP;
+	var SDW_IPS = ""; //SDW_IPS is a whitespace sparated IPs string
+	
+	MDW_IP = cluster.mdwIP;
+	SMDW_IP = cluster.smdwIP;
+	
+	var tempArray = cluster.sdwIPs.split(",");
+	for (var i = 0; i &lt; tempArray.length; i++){
+		SDW_IPS += tempArray[i];
+		if (i &lt; tempArray.length - 1){
+			SDW_IPS += " ";
+		}
+	}
+	
+	System.log("SDW_IPS is" + SDW_IPS);
+	var mdwVM;
+	var sshScript = "source /usr/local/greenplum-db-6.0.0/greenplum_path.sh \n"; //a script for configurating SSHPASS
+	var sdwCount = 1;
+	
+	//loop through each member in the cluster
+	cluster.members.forEach(function(member){
+		if (member.role == "mdw"){ //if the roles is master, find the corresponding VM object and store in mdwVM. use wiil be used at a later stage
+			mdwVM = VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ member.hostname + "\'")[0];
+		}else if (member.role == "smdw"){//buidling SSHPASS script. the script will be used at a later stage
+			sshScript += "SSHPASS=" + payload.machine.properties.get("com.samsung.gpadminPW") + " sshpass -e ssh-copy-id -o \"StrictHostKeyChecking=no\" smdw\n";
+		} else if (member.role == "sdw"){//building SSHPASS script. the script will be used at a later stage
+			sshScript += "SSHPASS=" + payload.machine.properties.get("com.samsung.gpadminPW") + " sshpass -e ssh-copy-id -o \"StrictHostKeyChecking=no\" sdw" + sdwCount + "\n";
+			sdwCount++;
+		}
+		
+		var inputProps = new Properties;
+		
+		inputProps.put("vm", VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ member.hostname + "\'")[0]);
+		inputProps.put("username", guestUsername);
+		inputProps.put("password", guestPassword);
+		inputProps.put("scriptType", "bash");
+		inputProps.put("scriptTimeout", 120);
+		
+		//run following script on each of the node
+		var script = "";
+		script += "/bin/bash /root/prepare.sh " + member.role + " "  + MDW_IP + " "  + SMDW_IP + " " + SDW_IPS + "\n";
+		script += "/bin/bash /root/user.sh " + payload.machine.properties.get("com.samsung.gpadminPW") + "\n";
+		script += "/bin/bash /root/install.sh " + "6.0.0\n";
+		//add source infomation in gpadmin's bash profile
+		script += "echo 'source /usr/local/greenplum-db-6.0.0/greenplum_path.sh' &gt;&gt; /home/gpadmin/,bashrc \n";
+
+		inputProps.put("script", script);
+		
+		var token = runScriptWorkflow.execute(inputProps);
+		
+		while (token.state != "canceled" &amp;&amp; token.state != "completed" &amp;&amp; token.state != "failed"){
+			System.sleep(30 * 1000);
+		}
+	});
+	
+	var inputProps = new Properties;
+		
+	inputProps.put("vm", mdwVM);
+	inputProps.put("username", "gpadmin");
+	inputProps.put("password", payload.machine.properties.get("com.samsung.gpadminPW"));
+	inputProps.put("scriptType", "bash");
+	inputProps.put("scriptTimeout", 120);
+	
+	sshScript += "gpssh-exkeys -f /data/gpconfig/host_all\n";
+	inputProps.put("script", sshScript);
+	
+	//run sshScript in the master node
+	var token = runScriptWorkflow.execute(inputProps);
+	
+	while (token.state != "canceled" &amp;&amp; token.state != "completed" &amp;&amp; token.state != "failed"){
+		System.sleep(30 * 1000);
+	}
+	
+	inputProps = new Properties;
+		
+	inputProps.put("vm", mdwVM);
+	inputProps.put("username", guestUsername);
+	inputProps.put("password", guestPassword);
+	inputProps.put("scriptType", "bash");
+	inputProps.put("scriptTimeout", 120);
+	
+	//run data.sh in master node
+	inputProps.put("script", "/bin/bash /root/data.sh 6.0.0");
+	
+	token = runScriptWorkflow.execute(inputProps);
+	
+	while (token.state != "canceled" &amp;&amp; token.state != "completed" &amp;&amp; token.state != "failed"){
+		System.sleep(30 * 1000);
+	}
+	
+
+}
+
+</script>
+        <in-binding>
+            <bind name="payload" type="Properties" export-name="payload"/>
+            <bind name="runScriptWorkflow" type="Workflow" export-name="runScriptWorkflow"/>
+            <bind name="guestPassword" type="SecureString" export-name="guestPassword"/>
+            <bind name="guestUsername" type="string" export-name="guestUsername"/>
+        </in-binding>
+        <out-binding/>
+        <position y="55.40909090909091" x="344.5"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item1" type="task" comparator="0">
+        <display-name>Locking</display-name>
+        <script encoded="false">while (getRuns()[0].id != workflow.id)
+{
+System.sleep(1000);
+}
+function byDate(a,b)
+{
+var A = a.startDateAsDate.getTime();
+var B = b.startDateAsDate.getTime();
+return (A &gt; B);
+}
+function getRuns()
+{
+var tokens = workflow.rootWorkflow.executions;
+var temp = new Array();
+for each (var token in tokens)
+{
+if ((token.state == "running") ||
+((token.state == "waiting")) ||
+((token.state == "waiting-signal"))) temp.push(token);
+}
+temp = temp.sort(byDate);
+return temp;
+}</script>
+        <in-binding/>
+        <out-binding/>
+        <position y="55.40909090909091" x="204.5"/>
+    </workflow-item>
+    <presentation>
+        <p-param name="payload">
+            <desc>payload</desc>
+        </p-param>
+    </presentation>
+</ns2:workflow>

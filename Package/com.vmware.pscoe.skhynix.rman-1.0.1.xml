@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='1979cda7-5d57-36d9-a171-a7865b2d335a'&dunesName='Action'&name='GuestOpsExecutor'&category='com.vmware.pscoe.skhynix.rman.guestops']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='5e82859b-0c79-31de-8074-ca028d8038a1'&dunesName='Action'&name='generateDeploymentName'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='1bbfa3cb-604b-37ae-bb61-1909417d94b0'&dunesName='Action'&name='getRMANBackupFileNames'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='6da91128-6351-3a1d-9bfe-987bc93f6020'&dunesName='Action'&name='Utils'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='90fc0308-1bce-31f9-84e0-933401632114'&dunesName='Action'&name='RMANConfigAccessor'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='d3c2dceb-9b64-3b91-a5db-c56a1c058b83'&dunesName='Action'&name='getAllDatacenters'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='56b90806-cdc5-324b-9503-62f7af7bfe1b'&dunesName='Action'&name='getVMsInDatacenter'&category='com.vmware.pscoe.skhynix.rman.common']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='b99fffb3-08d0-332e-8bc9-8a2f53d95713'&dunesName='Action'&name='SSHService'&category='com.vmware.pscoe.skhynix.rman.NFS']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='b41d96c5-b03a-3d6d-b89f-ba0c78cb4dab'&dunesName='Action'&name='NFSService'&category='com.vmware.pscoe.skhynix.rman.NFS']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='84cc2344-9c38-3183-ac78-7682c67ad664'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='b770cae5-f435-33df-b77d-d5fc03010aae'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='985bc489-aba2-366f-94dd-56e8eaf9d358'&dunesName='ConfigurationElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='053d1eea-6020-36cb-8ea0-12efe60ead28'&dunesName='ResourceElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='f46c38bd-a0f6-35fd-9d89-50251d40431c'&dunesName='ResourceElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='6c0c817e-972d-363c-9ccc-eeed03d229de'&dunesName='ResourceElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ResourceElement?id='774441b6-03f1-3101-b718-b9e9e682dee1'&dunesName='ResourceElement']]></elm>
+</package>

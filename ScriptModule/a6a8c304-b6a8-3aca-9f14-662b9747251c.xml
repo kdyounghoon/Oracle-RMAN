@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="ResourceElementAccessor" result-type="Any" api-version="6.0.0" id="a6a8c304-b6a8-3aca-9f14-662b9747251c" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var ResourceElementAccessor = /** @class */ (function () {
+    function ResourceElementAccessor(resourcePath, throwIfMissing) {
+        var _this = this;
+        this.resourcePath = resourcePath;
+        var sepIndex = resourcePath.lastIndexOf("/");
+        this.categoryPath = resourcePath.substring(0, sepIndex);
+        this.elementName = resourcePath.substring(sepIndex + 1);
+        var category = Server.getResourceElementCategoryWithPath(this.categoryPath);
+        if (category) {
+            this.resourceElement = VROES.Shims.arrayFind((category.resourceElements || []), function (re) { return re.name == _this.elementName; });
+        }
+        if (!this.resourceElement && throwIfMissing) {
+            throw new Error("Resource element " + this.elementName + " with path " + this.categoryPath + " not found.");
+        }
+    }
+    ResourceElementAccessor.prototype.getContent = function () {
+        if (this.resourceElement) {
+            var mimeContent = this.resourceElement.getContentAsMimeAttachment();
+            return mimeContent.content || "";
+        }
+    };
+    ResourceElementAccessor.prototype.setContent = function (content, mimeType) {
+        var contentMime = new MimeAttachment();
+        contentMime.content = content;
+        contentMime.mimeType = mimeType || "text/plain";
+        this.getElement().setContentFromMimeAttachment(contentMime);
+    };
+    ResourceElementAccessor.prototype.asJSON = function () {
+        return JSON.parse(this.getContent());
+    };
+    ResourceElementAccessor.prototype.delete = function () {
+        if (this.resourceElement) {
+            Server.removeResourceElement(this.resourceElement);
+        }
+    };
+    ResourceElementAccessor.prototype.writeContentToFile = function (fileName) {
+        this.getElement().writeContentToFile(fileName);
+    };
+    ResourceElementAccessor.prototype.getElement = function () {
+        if (!this.resourceElement) {
+            this.resourceElement = Server.createResourceElement(this.categoryPath, this.elementName);
+        }
+        return this.resourceElement;
+    };
+    return ResourceElementAccessor;
+}());
+return VROES.export().named("ResourceElementAccessor", ResourceElementAccessor).build();
+]]></script>
+</dunes-script-module>

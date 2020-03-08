@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Shims" result-type="Any" api-version="6.0.0" id="2a1ec9fd-4e55-3e64-9c54-17773e5640ec" version="2.4.3" allowed-operations="vef" category-name="com.vmware.pscoe.library.ecmascript">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Shims = /** @class */ (function () {
+    function Shims() {
+    }
+    Shims.stringStartsWith = function (str, search, pos) {
+        pos = !pos || pos < 0 ? 0 : +pos;
+        return str.substring(pos, pos + search.length) === search;
+    };
+    Shims.stringEndsWith = function (str, search, strLen) {
+        if (strLen === undefined || strLen > this.length) {
+            strLen = str.length;
+        }
+        return str.substring(strLen - search.length, strLen) === search;
+    };
+    Shims.stringIncludes = function (str, search, start) {
+        if (typeof start !== "number") {
+            start = 0;
+        }
+        if (start + search.length > str.length) {
+            return false;
+        }
+        else {
+            return str.indexOf(search, start) !== -1;
+        }
+    };
+    Shims.stringRepeat = function (str, count) {
+        if (str == null) { // check if `str` is null or undefined
+            throw new TypeError("can't convert " + str + " to object");
+        }
+        var result = "" + str;
+        // To convert string to integer.
+        count = +count;
+        if (count < 0) {
+            throw new RangeError("repeat count must be non-negative");
+        }
+        if (count == Infinity) {
+            throw new RangeError("repeat count must be less than infinity");
+        }
+        count |= 0; // floors and rounds-down it.
+        if (result.length == 0 || count == 0) {
+            return "";
+        }
+        // Ensuring count is a 31-bit integer allows us to heavily optimize the
+        // main part. But anyway, most current (August 2014) browsers can't handle
+        // strings 1 << 28 chars or longer, so:
+        if (result.length * count >= (1 << 28)) {
+            throw new RangeError("repeat count must not overflow maximum string size");
+        }
+        while (count >>= 1) { // shift it by multiple of 2 because this is binary summation of series
+            result += result; // binary summation
+        }
+        result += result.substring(0, result.length * count - result.length);
+        return result;
+    };
+    Shims.arrayFrom = function (arrayLike, mapfn) {
+        var array = arrayLike;
+        if (mapfn) {
+            array = array.map(mapfn);
+        }
+        return array;
+    };
+    Shims.arrayOf = function () {
+        return Array.prototype.slice.call(arguments);
+    };
+    Shims.objectAssign = function (target) {
+        if (target === null || target === undefined) {
+            throw new TypeError("Cannot convert undefined or null to object");
+        }
+        var to = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var nextSource = arguments[index];
+            if (nextSource !== null && nextSource !== undefined) {
+                for (var nextKey in nextSource) {
+                    // Avoid bugs when hasOwnProperty is shadowed
+                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
+            }
+        }
+        return to;
+    };
+    Shims.arrayFind = function (array, predicate) {
+        for (var i = 0; i < array.length; i++) {
+            if (predicate(array[i], i, array)) {
+                return array[i];
+            }
+        }
+    };
+    Shims.arrayFindIndex = function (array, predicate) {
+        for (var i = 0; i < array.length; i++) {
+            if (predicate(array[i], i, array)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    Shims.arrayFill = function (array, value, start, end) {
+        if (end < 0) {
+            end = array.length + end * -1;
+        }
+        for (var i = start; i < end; i++) {
+            array[i] = value;
+        }
+        return array;
+    };
+    return Shims;
+}());
+return VROES.export().default(Shims).build();
+]]></script>
+</dunes-script-module>

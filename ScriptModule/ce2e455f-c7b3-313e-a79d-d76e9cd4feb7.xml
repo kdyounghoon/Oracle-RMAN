@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="XmlUtil" result-type="Any" api-version="6.0.0" id="ce2e455f-c7b3-313e-a79d-d76e9cd4feb7" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var XmlUtil = /** @class */ (function () {
+    function XmlUtil() {
+        throw new Error("Private constructor");
+    }
+    XmlUtil.json2xml = function (obj) {
+        if (obj === Object(obj)) {
+            var xml = "";
+            for (var k in obj) {
+                xml += "<" + k + ">";
+                xml += XmlUtil.json2xml(obj[k]);
+                xml += "</" + k + ">";
+            }
+            return xml;
+        }
+        else {
+            return obj;
+        }
+    };
+    return XmlUtil;
+}());
+return VROES.export().named("XmlUtil", XmlUtil).build();
+]]></script>
+</dunes-script-module>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Ip4" result-type="Any" api-version="6.0.0" id="9d352a97-cb26-3f21-a334-00e14d0775e0" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Ip4 = /** @class */ (function () {
+    function Ip4() {
+    }
+    /**
+     * Converts Subnet Prefix to Subnet Mask
+     * @param prefix - an integer/string representation of the Subnet Prefix
+     * @return a string representation of the Subnet Mask
+     * Ex: 24 -> 255.255.255.0
+     */
+    Ip4.prefixToMask = function (prefix) {
+        if (!(/^\d+$/.test(prefix)) || parseInt(prefix) < 0 || parseInt(prefix) > 32) {
+            throw new Error("Prefix should be numeric value between 0 and 32.");
+        }
+        var binaryMask = "";
+        for (var i = 0; i < 32; i++) {
+            binaryMask += i < parseInt(prefix) ? "1" : "0";
+        }
+        var intMask = parseInt(binaryMask, 2);
+        return Ip4.numberToIpInt(intMask);
+    };
+    Ip4.numberToIpInt = function (number) {
+        var d = (number % 256).toString();
+        for (var i = 3; i > 0; i--) {
+            number = Math.floor(number / 256);
+            d = number % 256 + "." + d;
+        }
+        return d;
+    };
+    /**
+     * Checks whether string is a valid IP address
+     *
+     * @param ipAddress string
+     * @return boolean
+     */
+    Ip4.isValid = function (ipAddress) {
+        var ipPattern = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+        return ipPattern.test(ipAddress);
+    };
+    return Ip4;
+}());
+return VROES.export().named("Ip4", Ip4).build();
+]]></script>
+</dunes-script-module>

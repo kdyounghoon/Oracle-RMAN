@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='c715c7a7-c4f6-334f-b951-725888d3bf10'&dunesName='Action'&name='ServerAppender'&category='com.vmware.pscoe.library.logging.appenders']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='7a35cad6-d7fc-301c-975d-ccee46e1112d'&dunesName='Action'&name='SystemAppender'&category='com.vmware.pscoe.library.logging.appenders']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='a9ba2c4f-5ec4-396c-a177-915d27f824d4'&dunesName='Action'&name='BaseAppender'&category='com.vmware.pscoe.library.logging.appenders']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='60b64de8-57b2-33bb-b970-7695826faad5'&dunesName='Action'&name='FileAppender'&category='com.vmware.pscoe.library.logging.appenders']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='6596e703-ec91-3f62-80dd-ea64eba64465'&dunesName='Action'&name='Formatter'&category='com.vmware.pscoe.library.logging.format']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='75f9b61c-abe0-316d-9c56-211d7aab4588'&dunesName='Action'&name='Logger'&category='com.vmware.pscoe.library.logging']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='c88b06bc-da81-3be5-bbb7-5a4522daa5f7'&dunesName='Action'&name='getLogger'&category='com.vmware.pscoe.library.logging']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='d857e3bb-1cf2-3a2b-b2b0-3cbcfed674e9'&dunesName='Action'&name='LoggingConfig'&category='com.vmware.pscoe.library.logging.install.handlers']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='7a98845a-6c48-3fc6-9570-649839f728d9'&dunesName='Action'&name='LoggerConfiguration'&category='com.vmware.pscoe.library.logging.configuration']]></elm>
+</package>

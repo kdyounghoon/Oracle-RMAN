@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="SSHService" result-type="Any" api-version="6.0.0" id="b99fffb3-08d0-332e-8bc9-8a2f53d95713" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.NFS">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var SSHService = /** @class */ (function () {
+    function SSHService(hostname, username, password, port) {
+        this.configAccessor = new RMANConfigAccessor();
+        this.hostname = hostname ? hostname : this.configAccessor.sshHostname;
+        this.username = username ? username : this.configAccessor.sshUsername;
+        this.password = password ? password : this.configAccessor.sshPassword;
+        this.port = port ? port : 22;
+    }
+    SSHService.prototype.openSession = function () {
+        if (!Utils.isDefined(this.session)) {
+            this.session = new SSHSession(this.hostname, this.username, this.port);
+            this.session.connectWithPassword(this.password);
+            System.log("Connected to host.");
+        }
+    };
+    SSHService.prototype.executeCommand = function (command) {
+        this.openSession();
+        this.session.executeCommand(command, true);
+        System.log("Executing " + command + "...");
+        var commandOutput = {
+            output: this.session.output,
+            error: this.session.error,
+            exitCode: this.session.exitCode
+        };
+        System.log("Output: " + commandOutput.output + "\nError: " + commandOutput.error + "\nExitCode: " + commandOutput.exitCode);
+        if (commandOutput.exitCode !== 0) { //don't judge; it's javascript ... 
+            throw new Error("Error during command execution");
+        }
+        return commandOutput;
+    };
+    SSHService.prototype.closeSession = function () {
+        try {
+            this.session.disconnect;
+            System.log("Disconnected from host.");
+        }
+        catch (_a) { }
+    };
+    return SSHService;
+}());
+return VROES.export().named("SSHService", SSHService).build();
+]]></script>
+</dunes-script-module>

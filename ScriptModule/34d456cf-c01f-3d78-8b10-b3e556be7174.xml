@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="OnErrorResumeNext" result-type="Any" api-version="6.0.0" id="34d456cf-c01f-3d78-8b10-b3e556be7174" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+function OnErrorResumeNext(logger) {
+    return function (target, propertyName, propertyDesciptor) {
+        propertyDesciptor = propertyDesciptor || Object.getOwnPropertyDescriptor(target, propertyName);
+        var method = propertyDesciptor.value;
+        propertyDesciptor.value = function () {
+            try {
+                return method.apply(this, arguments);
+            }
+            catch (err) {
+                logger(err);
+            }
+        };
+        target[propertyName] = propertyDesciptor.value;
+        return propertyDesciptor;
+    };
+}
+return VROES.export().named("OnErrorResumeNext", OnErrorResumeNext).build();
+]]></script>
+</dunes-script-module>

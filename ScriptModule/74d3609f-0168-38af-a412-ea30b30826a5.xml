@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="WorkflowUtil" result-type="Any" api-version="6.0.0" id="74d3609f-0168-38af-a412-ea30b30826a5" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var WorkflowUtil = /** @class */ (function () {
+    function WorkflowUtil() {
+    }
+    WorkflowUtil.findByFqn = function (fqn, throwIfMissing) {
+        var index = fqn.lastIndexOf("/");
+        var workflowCategory = Server.getWorkflowCategoryWithPath(fqn.substring(0, index));
+        if (workflowCategory) {
+            var workflowName = fqn.substring(index + 1);
+            for (var _i = 0, _a = workflowCategory.allWorkflows; _i < _a.length; _i++) {
+                var workflow_1 = _a[_i];
+                if (workflow_1.name == workflowName) {
+                    return workflow_1;
+                }
+            }
+        }
+        if (throwIfMissing) {
+            throw new Error("Workflow '" + fqn + "' does not exist.");
+        }
+        return null;
+    };
+    WorkflowUtil.isAlive = function (token) {
+        var state = typeof token == "string" ? Server.getWorkflowTokenState(token) : token.state;
+        return ["failed", "completed", "canceled", "undefined", null].indexOf(state) < 0;
+    };
+    return WorkflowUtil;
+}());
+return VROES.export().named("WorkflowUtil", WorkflowUtil).build();
+]]></script>
+</dunes-script-module>

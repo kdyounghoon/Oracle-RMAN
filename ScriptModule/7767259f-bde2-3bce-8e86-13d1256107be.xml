@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="ConfigElementAccessor" result-type="Any" api-version="6.0.0" id="7767259f-bde2-3bce-8e86-13d1256107be" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var ConfigElementAccessor = /** @class */ (function () {
+    function ConfigElementAccessor(configPath, throwIfMissing) {
+        var _this = this;
+        this.configPath = configPath;
+        var sepIndex = configPath.lastIndexOf("/");
+        this.categoryPath = configPath.substring(0, sepIndex);
+        this.elementName = configPath.substring(sepIndex + 1);
+        var category = Server.getConfigurationElementCategoryWithPath(this.categoryPath);
+        if (category) {
+            this.configElement = VROES.Shims.arrayFind((category.configurationElements || []), function (ce) { return ce.name == _this.elementName; });
+        }
+        if (!this.configElement && throwIfMissing) {
+            throw new Error("Configuration element " + this.elementName + " with path " + this.categoryPath + " not found.");
+        }
+    }
+    ConfigElementAccessor.prototype.get = function (name, throwIfMissing) {
+        var value;
+        if (this.configElement) {
+            var attrib = this.configElement.getAttributeWithKey(name);
+            value = attrib ? attrib.value : null;
+        }
+        if (throwIfMissing && value == null) {
+            throw new Error("Configuration at " + this.configPath + "/" + name + " does not have a value.");
+        }
+        return value;
+    };
+    ConfigElementAccessor.prototype.getNames = function () {
+        return this.configElement ? this.configElement.attributes.map(function (att) { return att.name; }) : [];
+    };
+    ConfigElementAccessor.prototype.set = function (name, value) {
+        this.getElement().setAttributeWithKey(name, value);
+    };
+    ConfigElementAccessor.prototype.remove = function (name) {
+        if (this.configElement) {
+            this.configElement.removeAttributeWithKey(name);
+        }
+    };
+    ConfigElementAccessor.prototype.reload = function () {
+        if (this.configElement) {
+            this.configElement.reload();
+        }
+    };
+    ConfigElementAccessor.prototype.getElement = function () {
+        if (!this.configElement) {
+            this.configElement = Server.createConfigurationElement(this.categoryPath, this.elementName);
+        }
+        return this.configElement;
+    };
+    return ConfigElementAccessor;
+}());
+return VROES.export().named("ConfigElementAccessor", ConfigElementAccessor).build();
+]]></script>
+</dunes-script-module>

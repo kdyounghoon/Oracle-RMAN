@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="Utils" result-type="Any" api-version="6.0.0" id="6da91128-6351-3a1d-9bfe-987bc93f6020" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.common">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var Utils = /** @class */ (function () {
+    function Utils() {
+    }
+    Utils.filterFileList = function (list, pattern) {
+        return list.filter(function (str) { return str.toLowerCase().indexOf(pattern.toLocaleLowerCase()) >= 0; });
+    };
+    Utils.isDefined = function (value) {
+        return value !== undefined && value !== null;
+    };
+    Utils.getDateTimeNow = function () {
+        var today = new Date();
+        return System.formatDate(today, "yyyy-MM-dd HH:mm:ss");
+        ;
+    };
+    Utils.formatDateTime = function (date) {
+        return "'" + System.formatDate(date, "yyyy/MM/dd HH:mm:ss") + "'";
+    };
+    Utils.isEmpty = function (obj) {
+        return Object.keys(obj).length === 0 && obj.constructor === Object;
+    };
+    Utils.checkParentFolder = function (folder, folderName, folderType) {
+        if (folder.type && (folder.type.toLocaleLowerCase() === folderType.toLocaleLowerCase()) &&
+            folder.name && (folder.name.toLocaleLowerCase() === folderName.toLocaleLowerCase())) {
+            return true;
+        }
+        else if (!folder.parent) {
+            System.log("Empty parent for " + folder.name);
+            return false;
+        }
+        else {
+            return this.checkParentFolder(folder.parent, folderName, folderType);
+        }
+    };
+    return Utils;
+}());
+return VROES.export().named("Utils", Utils).build();
+]]></script>
+</dunes-script-module>

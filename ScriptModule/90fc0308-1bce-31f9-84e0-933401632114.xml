@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="RMANConfigAccessor" result-type="Any" api-version="6.0.0" id="90fc0308-1bce-31f9-84e0-933401632114" version="1.0.1" allowed-operations="vef" category-name="com.vmware.pscoe.skhynix.rman.common">
+  <script encoded="false"><![CDATA[var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var ConfigElementAccessor = VROES.import("ConfigElementAccessor").from("com.vmware.pscoe.library.ts.util.ConfigElementAccessor");
+var RMANConfigAccessor = /** @class */ (function (_super) {
+    __extends(RMANConfigAccessor, _super);
+    function RMANConfigAccessor() {
+        return _super.call(this, "SKHynix/Oracle-recovery/RMANConfig", true) || this;
+    }
+    Object.defineProperty(RMANConfigAccessor.prototype, "sshHostname", {
+        get: function () {
+            return this.get("sshHostname");
+        },
+        set: function (value) {
+            this.set("sshHostname", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "sshPassword", {
+        get: function () {
+            return this.get("sshPassword");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "sshUsername", {
+        get: function () {
+            return this.get("sshUsername");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "nfsClientFolder", {
+        get: function () {
+            return this.get("nfsClientFolder");
+        },
+        set: function (value) {
+            this.set("nfsClientFolder", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "nfsServerShare", {
+        get: function () {
+            return this.get("nfsServerShare");
+        },
+        set: function (value) {
+            this.set("nfsServerShare", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "nfsServer", {
+        get: function () {
+            return this.get("nfsServer");
+        },
+        set: function (value) {
+            this.set("nfsServer", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "vCenterHost", {
+        get: function () {
+            return this.get("vCenterHost");
+        },
+        set: function (value) {
+            this.set("vCenterHost", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "guestOSusername", {
+        get: function () {
+            return this.get("guestOSusername");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "guestOSpassword", {
+        get: function () {
+            return this.get("guestOSpassword");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "guestOStempDir", {
+        get: function () {
+            return this.get("guestOStempDir");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "sshPasword", {
+        set: function (value) {
+            this.set("sshPassword", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RMANConfigAccessor.prototype, "sshUserName", {
+        set: function (value) {
+            this.set("sshUsername", value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return RMANConfigAccessor;
+}(ConfigElementAccessor));
+return VROES.export().named("RMANConfigAccessor", RMANConfigAccessor).build();
+]]></script>
+</dunes-script-module>

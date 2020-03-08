@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="StringBuilder" result-type="Any" api-version="6.0.0" id="04026de8-ef2a-361a-bc5b-f7220710dcb3" version="2.0.0" allowed-operations="vef" category-name="com.vmware.pscoe.library.ts.util">
+  <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var StringBuilder = /** @class */ (function () {
+    function StringBuilder(newLine, indent) {
+        this.newLine = newLine != null ? newLine : "\r\n";
+        this.indentText = indent != null ? indent : "\t";
+        this.content = "";
+        this.indentLevel = 0;
+    }
+    StringBuilder.prototype.indent = function () {
+        this.indentLevel++;
+        this.needIndentation = true;
+        return this;
+    };
+    StringBuilder.prototype.unindent = function () {
+        this.indentLevel--;
+        this.needIndentation = true;
+        return this;
+    };
+    StringBuilder.prototype.append = function (str, multiline) {
+        if (str) {
+            if (multiline) {
+                var lines = str.split(/\r?\n/);
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+                    if (i) {
+                        this.appendLine();
+                    }
+                    if (line.trim().length) {
+                        this.applyIndent();
+                    }
+                    this.content += line;
+                }
+            }
+            else {
+                this.applyIndent();
+                this.content += str;
+            }
+        }
+        return this;
+    };
+    StringBuilder.prototype.appendLine = function (str) {
+        this.append(str);
+        this.content += this.newLine;
+        this.needIndentation = true;
+        return this;
+    };
+    StringBuilder.prototype.toString = function () {
+        return this.content;
+    };
+    StringBuilder.prototype.applyIndent = function () {
+        if (this.needIndentation) {
+            for (var i = 0; i < this.indentLevel; i++) {
+                this.content += this.indentText;
+            }
+            this.needIndentation = false;
+        }
+    };
+    return StringBuilder;
+}());
+return VROES.export().named("StringBuilder", StringBuilder).build();
+]]></script>
+</dunes-script-module>

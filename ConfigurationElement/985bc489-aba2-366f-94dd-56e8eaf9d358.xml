@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="985bc489-aba2-366f-94dd-56e8eaf9d358" version="1.0.1">
+  <display-name><![CDATA[RMANConfig]]></display-name>
+  <atts>
+    <att name="sshHostname" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="sshUsername" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="sshPassword" type="SecureString" read-only="false"/>
+    <att name="nfsClientFolder" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="nfsServerShare" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="nfsServer" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="vCenterHost" type="VC:SdkConnection" read-only="false"/>
+    <att name="guestOSusername" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="guestOSpassword" type="SecureString" read-only="false"/>
+    <att name="guestOStempDir" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+  </atts>
+</config-element>

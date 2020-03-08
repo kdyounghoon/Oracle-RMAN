@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="84cc2344-9c38-3183-ac78-7682c67ad664" version="1.0.1" api-version="6.0.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[RMAN Recovery]]></display-name>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="inputDate" type="Date"/>
+    <param name="vmName" type="string"/>
+    <param name="backupFile" type="string"/>
+    <param name="dcName" type="string"/>
+  </input>
+  <output>
+    <param name="result" type="string"/>
+    <param name="error" type="string"/>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <position y="50.0" x="400.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task">
+    <display-name><![CDATA[RMANrecovery]]></display-name>
+    <script encoded="false"><![CDATA[var VROES = System.getModule("com.vmware.pscoe.library.ecmascript").VROES();
+var GuestOpsExecutor = VROES.import("GuestOpsExecutor").from("com.vmware.pscoe.skhynix.rman.guestops.GuestOpsExecutor");
+var RMANConfigAccessor = VROES.import("RMANConfigAccessor").from("com.vmware.pscoe.skhynix.rman.common.RMANConfigAccessor");
+var Utils = VROES.import("Utils").from("com.vmware.pscoe.skhynix.rman.common.Utils");
+var guestOps = new GuestOpsExecutor(dcName, vmName);
+guestOps.setScriptArguments([new RMANConfigAccessor().nfsClientFolder + "/" + backupFile, inputDate ? Utils.formatDateTime(inputDate) : "NoInputDate"]);
+var scriptResult = guestOps.runScriptFromVRO("rmanRecovery", []);
+result = scriptResult.output;
+error = scriptResult.error;
+System.log("Script result: \n" + result);
+System.log("Errors: " + error);
+]]></script>
+    <in-binding>
+      <bind name="vmName" type="string" export-name="vmName"/>
+      <bind name="backupFile" type="string" export-name="backupFile"/>
+      <bind name="dcName" type="string" export-name="dcName"/>
+      <bind name="inputDate" type="Date" export-name="inputDate"/>
+    </in-binding>
+    <out-binding>
+      <bind name="result" type="string" export-name="result"/>
+      <bind name="error" type="string" export-name="error"/>
+    </out-binding>
+    <position y="50.0" x="250.0"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="inputDate">
+      <desc><![CDATA[inputDate]]></desc>
+    </p-param>
+    <p-param name="vmName">
+      <desc><![CDATA[vmName]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="backupFile">
+      <desc><![CDATA[backupFile]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="dcName">
+      <desc><![CDATA[dcName]]></desc>
+      <p-qual kind="static" name="mandatory" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>
