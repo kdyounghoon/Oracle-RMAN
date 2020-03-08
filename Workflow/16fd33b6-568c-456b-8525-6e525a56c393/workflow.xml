@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item12" object-name="workflow:name=generic" id="16fd33b6-568c-456b-8525-6e525a56c393" editor-version="2.0" version="0.0.2" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>Install Application - Divided</display-name>
+    <position y="168.88888888888889" x="68.88888888888889"/>
+    <input>
+        <param name="inputProperties" type="Properties"/>
+    </input>
+    <output/>
+    <attrib name="_application_number" type="number">
+        <value encoded="n">0.0</value>
+    </attrib>
+    <attrib name="_application_list" type="Properties">
+        <value encoded="n">#[##]#</value>
+    </attrib>
+    <attrib name="_param_list" type="Properties">
+        <value encoded="n">#[##]#</value>
+    </attrib>
+    <attrib name="_vm_object" type="VC:VirtualMachine">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="_install_script" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="_script_output" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="_script_timeout" type="number">
+        <value encoded="n">420.0</value>
+    </attrib>
+    <attrib name="_linux_user" type="string">
+        <value encoded="n">root</value>
+    </attrib>
+    <attrib name="_windows_user" type="string">
+        <value encoded="n">Administrator</value>
+    </attrib>
+    <attrib name="_windows_password" type="SecureString">
+        <value encoded="n">8BO56H4DY77N61R72W65J31Y21P6B63C5EH330D8B4SA99DD43SF70E3D3U9A53C34U96C2F2EY32CA15AGE9BF087WFB3796CUA44EAAG837DA50K5743DB2X596A4D6U7209084Y74C80C7K8DBDEBDJED68482P59F9259P3C92D77R446448J47162AAL41DC335OCCD8E95J2013D0Y</value>
+    </attrib>
+    <attrib name="_linux_password" type="SecureString">
+        <value encoded="n">8BU56X4DN77R61I72G65X31H21S36B7819J963C2D7J4615618Y11B868FJ83A8D80YC23A628H36CE7F0H7D39895NCAB1063J12A6B4EQ8C30D06Q6904DCMDD51A11SD365A0BX81971E2Z5279C01S6E0129DX7788978Q92E5591YC30715DYE5F309FSC831911WCB83DE9I5D59C91K</value>
+    </attrib>
+    <attrib name="_script_type_linux" type="string">
+        <value encoded="n">bash</value>
+    </attrib>
+    <attrib name="err" type="string">
+        <value encoded="n"></value>
+    </attrib>
+    <attrib name="_script_type_windows" type="string">
+        <value encoded="n">powershell</value>
+    </attrib>
+    <attrib name="scriptRefreshTime" type="number">
+        <value encoded="n"/>
+    </attrib>
+    <workflow-item name="item1" out-name="item8" type="task" comparator="0">
+        <display-name>Apply Application install scripts</display-name>
+        <script encoded="false">_install_script = "";&#13;
+var app = _application_list[_application_number-1];&#13;
+System.log("Apps to install" + app);&#13;
+&#13;
+//Apply Parameters&#13;
+for each (var p in _param_list){&#13;
+    _install_script += "export " + p + " \n";&#13;
+}&#13;
+&#13;
+//Apply scripts&#13;
+_install_script += "yum install -y " + app + " \n"; &#13;
+&#13;
+System.log("Apply installation script : \n" + _install_script);</script>
+        <in-binding>
+            <bind name="_param_list" type="Properties" export-name="_param_list"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+        </in-binding>
+        <out-binding>
+            <bind name="_install_script" type="string" export-name="_install_script"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="104.11111111111111" x="1174.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item3" out-name="item14" alt-out-name="item13" type="custom-condition" comparator="0">
+        <display-name>Linux or Windows?</display-name>
+        <script encoded="false">&#13;
+&#13;
+var osType = inputProperties.customProperties.osType;&#13;
+if(osType == "LINUX"){&#13;
+    return true;&#13;
+}else if(osType == "WINDOWS"){&#13;
+    return false;&#13;
+}&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+</script>
+        <in-binding>
+            <bind name="inputProperties" type="Properties" export-name="inputProperties"/>
+            <bind name="counter" type="number"/>
+        </in-binding>
+        <out-binding/>
+        <description>Custom decision based on a custom script.</description>
+        <position y="168.88888888888889" x="317.77777777777777"/>
+    </workflow-item>
+    <workflow-item name="item6" type="end" end-mode="0" comparator="0">
+        <position y="24.444444444444443" x="1424.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item7" out-name="item1" alt-out-name="item6" type="custom-condition" comparator="0">
+        <display-name>More applications to install?</display-name>
+        <script encoded="false">System.log("How many applications to install: " + _application_number);&#13;
+if(_application_number != 0){&#13;
+    System.log("Will install " + _application_list[_application_number-1]);&#13;
+    return true;&#13;
+}else if(_application_number == 0){&#13;
+    return false;&#13;
+}</script>
+        <in-binding>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+        </in-binding>
+        <out-binding/>
+        <description>Custom decision based on a custom script.</description>
+        <position y="24.444444444444443" x="1028.888888888889"/>
+    </workflow-item>
+    <workflow-item name="item8" out-name="item17" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Run Script in Guest - Linux</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_linux_user"/>
+            <bind name="password" type="SecureString" export-name="_linux_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type_linux"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_script_timeout"/>
+            <bind name="scriptRefreshTime" type="number" export-name="scriptRefreshTime"/>
+            <bind name="scriptWorkingDirectory" type="string"/>
+            <bind name="interactiveSession" type="boolean"/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name="_script_output"/>
+            <bind name="scriptExitCode" type="number"/>
+        </out-binding>
+        <description> </description>
+        <position y="178.88888888888889" x="1184.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item12" out-name="item3" type="task" comparator="0">
+        <display-name>Get data from vRA and prepare them </display-name>
+        <script encoded="false">//Confirm all the inputs are properly in&#13;
+System.log(inputProperties.customProperties.application);&#13;
+System.log(inputProperties.customProperties.param);&#13;
+System.log(inputProperties.resourceNames[0]);&#13;
+System.log(inputProperties.customProperties.osType);&#13;
+System.log(inputProperties.customProperties.newUser);&#13;
+&#13;
+//Set all the variables here.&#13;
+var _vm_object = VcPlugin.getAllVirtualMachines(null, "xpath:name=\'"+ inputProperties.resourceNames[0]+ "\'")[0];&#13;
+var _install_script = "";&#13;
+var application = inputProperties.customProperties.application&#13;
+var param = inputProperties.customProperties.param;&#13;
+&#13;
+System.log("VM to run the scroipt: " + _vm_object );&#13;
+System.log("VM Name to run the script: " + inputProperties.resourceNames[0] );&#13;
+&#13;
+//Get application list(string) and split them into an array&#13;
+if(application){&#13;
+    _application_list = application.split(",");&#13;
+    for each (var a in _application_list){&#13;
+        _application_number++&#13;
+        System.log("Application list: " + a);&#13;
+    }&#13;
+    System.log("How many applications to install? : " + _application_number);&#13;
+}&#13;
+///Get parameter list(string) and split them into an array&#13;
+if(param){&#13;
+    _param_list = param.split(",");&#13;
+    for each (var p in _param_list){&#13;
+        System.log("Paramemter List: " + p);&#13;
+    }&#13;
+}</script>
+        <in-binding>
+            <bind name="inputProperties" type="Properties" export-name="inputProperties"/>
+        </in-binding>
+        <out-binding>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+            <bind name="_param_list" type="Properties" export-name="_param_list"/>
+            <bind name="_vm_object" type="VC:VirtualMachine" export-name="_vm_object"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="178.88888888888889" x="162.22222222222223"/>
+    </workflow-item>
+    <workflow-item name="item13" out-name="item16" type="task" comparator="0">
+        <display-name>Apply Windows Partitioning scripts</display-name>
+        <script encoded="false">_install_script = "mkdir -p /test01";</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="301.1111111111111" x="317.77777777777777"/>
+    </workflow-item>
+    <workflow-item name="item14" out-name="item15" type="task" comparator="0">
+        <display-name>Apply Linux OS related scripts</display-name>
+        <script encoded="false">_install_script = "mkdir -p /test01";</script>
+        <in-binding/>
+        <out-binding>
+            <bind name="_install_script" type="string" export-name="_install_script"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="34.44444444444444" x="317.77777777777777"/>
+    </workflow-item>
+    <workflow-item name="item15" out-name="item7" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Run Script in Guest - Linux</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_linux_user"/>
+            <bind name="password" type="SecureString" export-name="_linux_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type_linux"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_script_timeout"/>
+            <bind name="scriptRefreshTime" type="number"/>
+            <bind name="scriptWorkingDirectory" type="string"/>
+            <bind name="interactiveSession" type="boolean"/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name="_script_output"/>
+            <bind name="scriptExitCode" type="number"/>
+        </out-binding>
+        <description> </description>
+        <position y="34.44444444444444" x="499.55555555555554"/>
+    </workflow-item>
+    <workflow-item name="item16" out-name="item29" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Run Script in Guest - Windows</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_windows_user"/>
+            <bind name="password" type="SecureString" export-name="_windows_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type_windows"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_script_timeout"/>
+            <bind name="scriptRefreshTime" type="number" export-name=""/>
+            <bind name="scriptWorkingDirectory" type="string" export-name=""/>
+            <bind name="interactiveSession" type="boolean" export-name=""/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name=""/>
+            <bind name="scriptExitCode" type="number" export-name=""/>
+        </out-binding>
+        <description> </description>
+        <position y="378.88888888888886" x="317.77777777777777"/>
+    </workflow-item>
+    <workflow-item name="item17" out-name="item21" catch-name="item20" throw-bind-name="err" type="task" comparator="0">
+        <display-name>Validate the installation</display-name>
+        <script encoded="false">var app = _application_list[_application_number-1];&#13;
+&#13;
+if(_script_output.search("Complete!") &gt; 0 || _script_output.search("already") &gt; 0){&#13;
+    System.log("Successfully installed the applications: " + app + "\n");&#13;
+}else {&#13;
+    System.error("Failed to install the app: " + app + "\n" );&#13;
+    err = "Failed to install the app";&#13;
+    throw err;&#13;
+};</script>
+        <in-binding>
+            <bind name="_script_output" type="string" export-name="_script_output"/>
+            <bind name="err" type="string" export-name="err"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+        </in-binding>
+        <out-binding>
+            <bind name="err" type="string" export-name="err"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="178.88888888888889" x="828.8888888888889"/>
+    </workflow-item>
+    <workflow-item name="item20" throw-bind-name="err" type="end" end-mode="1" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="113.33333333333334" x="1046.6666666666667"/>
+    </workflow-item>
+    <workflow-item name="item21" out-name="item7" type="task" comparator="0">
+        <display-name>Decrease the counter</display-name>
+        <script encoded="false">System.log("Number of apps to install before: " + _application_number);&#13;
+_application_number = _application_number-1&#13;
+System.log("Number of apps to install decreased: " + _application_number);</script>
+        <in-binding>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+        </in-binding>
+        <out-binding>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="112.22222222222221" x="828.8888888888889"/>
+    </workflow-item>
+    <workflow-item name="item22" type="end" end-mode="0" comparator="0">
+        <position y="291.1111111111111" x="1424.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item23" out-name="item24" alt-out-name="item22" type="custom-condition" comparator="0">
+        <display-name>More applications to install?</display-name>
+        <script encoded="false">System.log("How many applications to install: " + _application_number);&#13;
+if(_application_number != 0){&#13;
+    System.log("Will install " + _application_list[_application_number-1]);&#13;
+    return true;&#13;
+}else if(_application_number == 0){&#13;
+    return false;&#13;
+}</script>
+        <in-binding>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+        </in-binding>
+        <out-binding/>
+        <description>Custom decision based on a custom script.</description>
+        <position y="291.1111111111111" x="1006.6666666666667"/>
+    </workflow-item>
+    <workflow-item name="item24" out-name="item25" type="task" comparator="0">
+        <display-name>Apply Application install scripts</display-name>
+        <script encoded="false">_install_script = "";&#13;
+var app = _application_list[_application_number-1];&#13;
+System.log("Apps to install" + app);&#13;
+&#13;
+//Apply Parameters&#13;
+for each (var p in _param_list){&#13;
+    _install_script += "export " + p + " \n";&#13;
+}&#13;
+&#13;
+//Apply scripts&#13;
+_install_script += "yum install -y " + app + " \n"; &#13;
+&#13;
+System.log("Apply installation script : \n" + _install_script);</script>
+        <in-binding>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+            <bind name="_param_list" type="Properties" export-name="_param_list"/>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+        </in-binding>
+        <out-binding>
+            <bind name="_install_script" type="string" export-name="_install_script"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="345.55555555555554" x="1184.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item25" out-name="item26" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Run Script in Guest - Windows</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_windows_user"/>
+            <bind name="password" type="SecureString" export-name="_windows_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type_windows"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_script_timeout"/>
+            <bind name="scriptRefreshTime" type="number" export-name="scriptRefreshTime"/>
+            <bind name="scriptWorkingDirectory" type="string"/>
+            <bind name="interactiveSession" type="boolean"/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name="_script_output"/>
+            <bind name="scriptExitCode" type="number"/>
+        </out-binding>
+        <description> </description>
+        <position y="401.1111111111111" x="1184.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item26" out-name="item27" catch-name="item28" throw-bind-name="err" type="task" comparator="0">
+        <display-name>Validate the installation</display-name>
+        <script encoded="false">if(_script_output.search("Complete!") &gt; 0 || _script_output.search("already") &gt; 0){&#13;
+    System.log("Successfully installed the applications")&#13;
+}else {&#13;
+    System.error("Failed to install the app");&#13;
+    err = "Failed to install the app";&#13;
+    throw err;&#13;
+};&#13;
+&#13;
+_script_output = "";</script>
+        <in-binding>
+            <bind name="_script_output" type="string" export-name="_script_output"/>
+            <bind name="_application_number" type="number" export-name="_application_number"/>
+            <bind name="_application_list" type="Properties" export-name="_application_list"/>
+            <bind name="err" type="string" export-name="err"/>
+        </in-binding>
+        <out-binding>
+            <bind name="err" type="string" export-name="err"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="401.1111111111111" x="828.8888888888889"/>
+    </workflow-item>
+    <workflow-item name="item27" out-name="item23" type="task" comparator="0">
+        <display-name>Decrease the counter</display-name>
+        <script encoded="false">System.log("Number of apps to install before: " + _application_number);&#13;
+_application_number = _application_number-1&#13;
+System.log("Number of apps to install decreased: " + _application_number);</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="345.55555555555554" x="828.8888888888889"/>
+    </workflow-item>
+    <workflow-item name="item28" throw-bind-name="err" type="end" end-mode="1" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="346.6666666666667" x="1024.4444444444443"/>
+    </workflow-item>
+    <workflow-item name="item29" out-name="item30" type="task" comparator="0">
+        <display-name>Apply Windows Post scripts</display-name>
+        <script encoded="false"></script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="378.88888888888886" x="517.7777777777777"/>
+    </workflow-item>
+    <workflow-item name="item30" out-name="item23" type="link" linked-workflow-id="f8cd5692-92a0-46b6-a98d-53ffd878d779" comparator="0">
+        <display-name>Run Script in Guest - Windows</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="_vm_object"/>
+            <bind name="username" type="string" export-name="_windows_user"/>
+            <bind name="password" type="SecureString" export-name="_windows_password"/>
+            <bind name="scriptType" type="string" export-name="_script_type_windows"/>
+            <bind name="script" type="string" export-name="_install_script"/>
+            <bind name="scriptTimeout" type="number" export-name="_script_timeout"/>
+            <bind name="scriptRefreshTime" type="number" export-name="scriptRefreshTime"/>
+            <bind name="scriptWorkingDirectory" type="string" export-name=""/>
+            <bind name="interactiveSession" type="boolean" export-name=""/>
+        </in-binding>
+        <out-binding>
+            <bind name="scriptOutputText" type="string" export-name=""/>
+            <bind name="scriptExitCode" type="number" export-name=""/>
+        </out-binding>
+        <description> </description>
+        <position y="301.1111111111111" x="517.7777777777777"/>
+    </workflow-item>
+    <presentation/>
+    <workflow-note x="274.0" y="13.5" w="420.0" h="105.0" color="d7efcf">
+        <description>Apply Linux OS Related Scripts</description>
+    </workflow-note>
+    <workflow-note x="802.0" y="14.5" w="549.0" h="215.5" color="d5eed0">
+        <description>Apply Linux Application Installation  Scripts</description>
+    </workflow-note>
+    <workflow-note x="796.0" y="264.0" w="532.0" h="175.77777862548828" color="FFFFC0">
+        <description>Double-click to edit note.</description>
+    </workflow-note>
+    <workflow-note x="796.0" y="264.0" w="532.0" h="175.77777862548828" color="FFFFC0">
+        <description>Apply Windows Application Installation  Scripts</description>
+    </workflow-note>
+    <workflow-note x="283.0" y="263.5" w="395.0" h="179.5" color="FFFFC0">
+        <description>Apply Windows OS Related Scripts</description>
+    </workflow-note>
+    <workflow-note x="157.0" y="148.5" w="364.0" h="96.0" color="80ff80">
+        <description>Get Data from vRA and decide whether it's LInux or Windows</description>
+    </workflow-note>
+    <workflow-note x="157.0" y="148.5" w="364.0" h="96.0" color="80ff80">
+        <description>Get Data from vRA and decide whether it's LInux or Windows</description>
+    </workflow-note>
+</ns2:workflow>
