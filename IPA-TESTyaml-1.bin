@@ -1,0 +1,1337 @@
+formatVersion: 1
+inputs:
+  vm_count:
+    type: integer
+    title: The number of VMs per host
+  prefix:
+    type: string
+  image:
+    type: string
+  customizationSpec:
+    type: string
+  cpu:
+    type: integer
+  memory:
+    type: integer
+    title: memory(GB)
+resources:
+  Cloud_vSphere_Network_1:
+    type: Cloud.vSphere.Network
+    metadata:
+      layoutPosition:
+        - 1
+        - 0
+    properties:
+      networkType: existing
+      constraints:
+        - tag: 'net:robo'
+  Cloud_vSphere_Network_2:
+    type: Cloud.vSphere.Network
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      networkType: existing
+      constraints:
+        - tag: 'net:robo'
+  vm01:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 0
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm02:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 1
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm03:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 2
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm04:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 3
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm05:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 4
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm06:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 5
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm07:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 6
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm08:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 7
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm09:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 8
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm10:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 9
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm11:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 10
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm12:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 11
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm13:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 12
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm14:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 13
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm15:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 14
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm16:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 15
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm17:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 16
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm18:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 17
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm19:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 18
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm20:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 19
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm21:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 20
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm22:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 21
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm23:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 22
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm24:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 23
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm25:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 24
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm26:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 25
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm27:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 26
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm28:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 27
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm29:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 28
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm30:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 29
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm31:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 30
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm32:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 31
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm33:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 32
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm34:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 33
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm35:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 34
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm36:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 35
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm37:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 36
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm38:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 37
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm39:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 38
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm40:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 39
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm41:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 40
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm42:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 41
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm43:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 42
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm44:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 43
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm45:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 44
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm46:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 45
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm47:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 46
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm48:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 47
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm49:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 48
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
+  vm50:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 2
+        - 49
+    properties:
+      constraints:
+        - tag: roboesxi01.psolab.local
+      storage:
+        constraints:
+          - tag: 'storage:robo'
+      vm_prefix: '${input.prefix}'
+      count: '${input.vm_count / 50}'
+      vm_count: '${input.vm_count}'
+      image: '${input.vm_count}'
+      customizationSpec: '${input.customizationSpec}'
+      cpuCount: '${input.cpu}'
+      totalMemoryMB: '${input.memory * 1024}'
+      networks:
+        - network: '${resource.Cloud_vSphere_Network_1.id}'
+          assignment: static
+          deviceIndex: 0
+        - network: '${resource.Cloud_vSphere_Network_2.id}'
+          assignment: static
+          deviceIndex: 1
